@@ -1,6 +1,6 @@
 import React,{Component} from 'react';
-import {PostMasterpiece, UploadFile} from "./RestOperations";
-import MasterpieceContribution from "./MasterpieceContribution";
+import MasterpieceContribution from "../MasterpieceContribution";
+import {PostMasterpiece} from "../RestOperations/MasterpieceRestOperations";
 
 class App extends Component {
     state = {
@@ -18,8 +18,6 @@ class App extends Component {
             "file",
             this.state.selectedFile,
         );
-        //
-        // UploadFile(this.state.selectedFile)
         PostMasterpiece(new MasterpieceContribution(4, 'aba', this.state.selectedFile))
     };
     fileData = () => {
