@@ -1,6 +1,7 @@
 import React,{Component} from 'react';
 import MasterpieceContribution from "../MasterpieceContribution";
-import {PostMasterpiece} from "../RestOperations/MasterpieceRestOperations";
+import {PostMasterpiece} from "../RestOperations/ServerRestOperations";
+import {PostS3File} from "../RestOperations/S3RestOperations";
 
 class App extends Component {
     state = {
@@ -18,7 +19,9 @@ class App extends Component {
             "file",
             this.state.selectedFile,
         );
-        PostMasterpiece(new MasterpieceContribution(4, 'aba', this.state.selectedFile))
+
+        PostS3File(this.state.selectedFile)
+        // PostMasterpiece(new MasterpieceContribution(4, 'aba', this.state.selectedFile))
     };
     fileData = () => {
 

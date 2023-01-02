@@ -1,7 +1,12 @@
-import {FetchAudioBlob, FetchGet, FetchPut} from "../RestOperations/RestOperations";
+import {FetchAudioBlob,  FetchPut} from "../RestOperations/RestOperations";
 import React, {useState} from "react";
 import Chooser from "./Chooser";
-import {GetMasterpieceData} from "../RestOperations/MasterpieceRestOperations";
+import {GetMasterpieceData} from "../RestOperations/ServerRestOperations";
+import {GetS3Audio} from "./AudioUtil";
+import MPSnippet from "./MPSnippet";
+import MPSnippetContainer from "./MPSnippetContainer";
+import {Box} from "@mui/material";
+import Typography from "@mui/material/Typography";
 
 export default function Explore() {
     // const [imageSrc, setImageSrc] = useState();
@@ -18,14 +23,20 @@ export default function Explore() {
     }
 
     return (
-        <div>
+        <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" >
             <h1>Welcome to Masterpiece</h1>
-            <button onClick={FetchGet}> Test Get Fetch</button>
-            <button onClick={()=>FetchPut(34)}> Put 34</button>
-            <button onClick={() => FetchAudioBlob(setAudioUrl)}> Change Audio</button>
-            <button onClick={PlayAudio}> Play </button>
-            <button onClick={GetMasterpieceData}>Get Masterpiece Data</button>
+
+            <div>
+                <button onClick={()=>FetchPut(34)}> Put 34</button>
+                <button onClick={() => FetchAudioBlob(setAudioUrl)}> Change Audio (server)</button>
+                <button onClick={() => GetS3Audio(setAudioUrl, "aRealHoot.mp3")}> Change Audio (s3)</button>
+                <button onClick={PlayAudio}> Play </button>
+                <button onClick={GetMasterpieceData}>Get Masterpiece Data</button>
             <Chooser/>
-        </div>
+            </div>
+            <MPSnippetContainer style={{backgroundColor:"beige", paddingTop:"4px", paddingBottom:"4px", paddingLeft:"8px", paddingRight:"8px", width:"500px"}}/>
+
+
+        </Box>
     );
 }

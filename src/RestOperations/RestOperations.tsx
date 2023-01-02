@@ -1,23 +1,12 @@
-import axios from "axios";
 import {GetDomainName} from "./RestOperationsUtil";
+import {GetS3FilesURLGet} from "./ServerRestOperations";
+import {GetS3FileBlobURL} from "./S3RestOperations";
 
-const customerApiURL = GetDomainName() + '/api/v1/customer';
-
-export const FetchGet = async () => {
-    console.log('fetching...');
-    fetch(customerApiURL, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    }).then(resp => {
-        resp.json().then(ob => console.log(ob));
-    });
-};
+const defaultApiURL = GetDomainName() + '/api/v1/default';
 
 export const FetchPut = async (id: number) => {
     console.log('putting...');
-    fetch(customerApiURL + '/' + id, {
+    fetch(defaultApiURL + '/' + id, {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
     })
