@@ -1,28 +1,25 @@
-import {GetDomainName} from "./RestOperationsUtil";
-import {GetS3FilesURLGet} from "./ServerRestOperations";
-import {GetS3FileBlobURL} from "./S3RestOperations";
+import { GetDomainName } from './RestOperationsUtil'
 
-const defaultApiURL = GetDomainName() + '/api/v1/default';
+const defaultApiURL = GetDomainName() + '/api/v1/default'
 
-export const FetchPut = async (id: number) => {
-    console.log('putting...');
-    fetch(defaultApiURL + '/' + id, {
+export const FetchPut = async (id: number): Promise<void> => {
+    console.log('putting...')
+    fetch(defaultApiURL + '/' + id.toString(), {
         method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' }
     })
         .then(resp => {
-            console.log(resp.status);
+            console.log(resp.status)
         })
         .catch(e => {
-            console.log(e);
-        });
-};
+            console.log(e)
+        })
+}
 
-export const FetchAudioBlob = async (setAudioUrl: any) => {
+export const FetchAudioBlob = async (setAudioUrl: any): Promise<void> => {
+    console.log('fetching audio blob')
+    const res = await fetch('http://localhost:8080/downloadFile/abc.wav')
+    const bloburl = URL.createObjectURL(await res.blob())
 
-    console.log("fetching audio blob")
-    let res = await fetch('http://localhost:8080/downloadFile/abc.wav')
-    let bloburl = URL.createObjectURL(await res.blob())
-
-    setAudioUrl(bloburl);
-};
+    setAudioUrl(bloburl)
+}

@@ -1,30 +1,28 @@
-import React,{Component} from 'react';
-import MasterpieceContribution from "../MasterpieceContribution";
-import {PostMasterpiece} from "../RestOperations/ServerRestOperations";
-import {PostS3File} from "../RestOperations/S3RestOperations";
+import React, { Component } from 'react'
+import { PostS3File } from '../RestOperations/S3RestOperations'
 
 class App extends Component {
     state = {
         selectedFile: null
-    };
+    }
 
     onFileChange = event => {
-        this.setState({ selectedFile: event.target.files[0] });
-    };
+        this.setState({ selectedFile: event.target.files[0] })
+    }
 
     onFileUpload = () => {
-        const formData = new FormData();
+        const formData = new FormData()
 
         formData.append(
-            "file",
-            this.state.selectedFile,
-        );
+            'file',
+            this.state.selectedFile
+        )
 
         PostS3File(this.state.selectedFile)
         // PostMasterpiece(new MasterpieceContribution(4, 'aba', this.state.selectedFile))
-    };
-    fileData = () => {
+    }
 
+    fileData = () => {
         if (this.state.selectedFile) {
             return (
                 <div>
@@ -35,17 +33,17 @@ class App extends Component {
                         Last Modified
                     </p>
                 </div>
-            );
+            )
         } else {
             return (
                 <div>
                     <h4>choose file :)</h4>
                 </div>
-            );
+            )
         }
-    };
+    }
 
-    render() {
+    render () {
         return (
             <div>
                 <h1>
@@ -59,8 +57,8 @@ class App extends Component {
                 </div>
                 {this.fileData()}
             </div>
-        );
+        )
     }
 }
 
-export default App;
+export default App

@@ -1,31 +1,30 @@
-import axios from "axios";
-import {GetS3FilesURLGet, GetS3FilesURLPost} from "./ServerRestOperations";
+import axios from 'axios'
+import { GetS3FilesURLGet, GetS3FilesURLPost } from './ServerRestOperations'
 
-export const GetS3FileBlobURL = async (filename: string) => {
-    let url = await GetS3FilesURLGet(filename);
-    if (url) {
-        let res = await axios.get(url, {
+export const GetS3FileBlobURL = async (filename: string): Promise<string | null> => {
+    const url = await GetS3FilesURLGet(filename)
+    if (url != null) {
+        const res = await axios.get(url, {
             responseType: 'blob'
-        });
+        })
 
-        let bloburl = URL.createObjectURL(res.data)
-        console.log(bloburl);
-        return bloburl;
+        const bloburl = URL.createObjectURL(res.data)
+        console.log(bloburl)
+        return bloburl
     }
 
-    return null;
+    return null
 }
 
-export const PostS3File = async (file: string) => {
-    let url = await GetS3FilesURLPost();
-    if (url) {
-        const data = new FormData();
+export const PostS3File = async (file: string): Promise<void> => {
+    const url = await GetS3FilesURLPost()
+    if (url != null) {
+        const data = new FormData()
 
-        data.append('file', file);
+        data.append('file', file)
 
-        let res = await axios.post(url, data);
+        const res = await axios.post(url, data)
 
-        console.log(res);
-
+        console.log(res)
     }
 }
