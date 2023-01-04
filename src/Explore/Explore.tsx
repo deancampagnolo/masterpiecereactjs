@@ -17,7 +17,7 @@ export default function Explore (): ReactJSXElement {
     //   FetchGetFile(setImageSrc);
     // }, []);
 
-    const PlayAudio = async () => {
+    const PlayAudio = async (): Promise<void> => {
         const audio = new Audio(audioUrl)
         await audio.play()
     }
