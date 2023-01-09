@@ -1,15 +1,16 @@
 import * as React from 'react'
 
 import Typography from '@mui/material/Typography'
-import { PlayArrow, UnfoldMore, Pause } from '@mui/icons-material'
+import { PlayArrow, UnfoldMore, Pause, Remove } from '@mui/icons-material'
 import { Box, Collapse, IconButton } from '@mui/material'
-import { useState } from 'react'
+import { Key, useState } from 'react'
 import AudioController from '../Utils/AudioController'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 
 interface MPSnippetProps {
     title: string
     audioController: AudioController
+    onRemove: () => void
 }
 
 export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
@@ -28,7 +29,8 @@ export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
     return (
         <div style={{ backgroundColor: 'lightblue', width: '100%', borderRadius: '6px', marginTop: '4px', marginBottom: '4px' }}>
             <Box display="flex" flexDirection="column">
-                <TopPortion title={props.title} isExpanded={isExpanded} setIsExpanded={setIsExpanded} isPlaying={isPlaying} onClick={() => { setIsPlaying(!isPlaying) }}/>
+                <TopPortion title={props.title} isExpanded={isExpanded} setIsExpanded={setIsExpanded} isPlaying={isPlaying}
+                    onClick={() => { setIsPlaying(!isPlaying) }} onRemove={() => { props.onRemove() }}/>
                 <CollapsablePortion isExpanded={isExpanded}/>
             </Box>
         </div>
@@ -41,6 +43,7 @@ interface TopPortionProps {
     isExpanded: boolean
     isPlaying: boolean
     onClick: React.MouseEventHandler<HTMLButtonElement> | undefined
+    onRemove: () => void
 }
 
 function TopPortion (props: TopPortionProps): ReactJSXElement {
@@ -55,6 +58,9 @@ function TopPortion (props: TopPortionProps): ReactJSXElement {
             </Typography>
             <IconButton size="small" onClick={() => props.setIsExpanded(!props.isExpanded)}>
                 <UnfoldMore/>
+            </IconButton>
+            <IconButton size="small" onClick={() => { props.onRemove() }}>
+                <Remove/>
             </IconButton>
         </Box>
     )
