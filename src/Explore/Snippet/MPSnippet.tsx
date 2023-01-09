@@ -3,7 +3,7 @@ import * as React from 'react'
 import Typography from '@mui/material/Typography'
 import { PlayArrow, UnfoldMore, Pause, Remove } from '@mui/icons-material'
 import { Box, Collapse, IconButton } from '@mui/material'
-import { Key, useState } from 'react'
+import {useState } from 'react'
 import AudioController from '../Utils/AudioController'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 
