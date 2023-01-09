@@ -6,6 +6,7 @@ import { GetS3Audio } from './AudioUtil'
 import MPSnippetContainer from './Snippet/MPSnippetContainer'
 import { Box } from '@mui/material'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
+import { createFFmpeg } from '@ffmpeg/ffmpeg'
 
 export default function Explore (): ReactJSXElement {
     // const [imageSrc, setImageSrc] = useState();
@@ -21,6 +22,16 @@ export default function Explore (): ReactJSXElement {
         const audio = new Audio(audioUrl)
         await audio.play()
     }
+    const ffmpeg = createFFmpeg({
+        log: true
+    })
+
+    const doTranscode = async (): Promise<void> => {
+        console.log('Loading ffmpeg-core.js')
+        await ffmpeg.load()
+    }
+
+    void doTranscode()
 
     return (
         <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" >
