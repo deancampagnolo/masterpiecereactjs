@@ -11,6 +11,7 @@ interface MPSnippetProps {
     title: string
     audioController: AudioController
     onRemove: () => void
+    removeEnabled?: boolean
 }
 
 export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
@@ -30,7 +31,7 @@ export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
         <div style={{ backgroundColor: 'lightblue', width: '100%', borderRadius: '6px', marginTop: '4px', marginBottom: '4px' }}>
             <Box display="flex" flexDirection="column">
                 <TopPortion title={props.title} isExpanded={isExpanded} setIsExpanded={setIsExpanded} isPlaying={isPlaying}
-                    onClick={() => { setIsPlaying(!isPlaying) }} onRemove={() => { props.onRemove() }}/>
+                    onClick={() => { setIsPlaying(!isPlaying) }} onRemove={() => { props.onRemove() }} removeEnabled={(props.removeEnabled === undefined) ? true : props.removeEnabled.valueOf()}/>
                 <CollapsablePortion isExpanded={isExpanded}/>
             </Box>
         </div>
@@ -44,6 +45,7 @@ interface TopPortionProps {
     isPlaying: boolean
     onClick: React.MouseEventHandler<HTMLButtonElement> | undefined
     onRemove: () => void
+    removeEnabled: boolean
 }
 
 function TopPortion (props: TopPortionProps): ReactJSXElement {
@@ -59,9 +61,12 @@ function TopPortion (props: TopPortionProps): ReactJSXElement {
             <IconButton size="small" onClick={() => props.setIsExpanded(!props.isExpanded)}>
                 <UnfoldMore/>
             </IconButton>
-            <IconButton size="small" onClick={() => { props.onRemove() }}>
-                <Remove/>
-            </IconButton>
+            { props.removeEnabled
+                ? <IconButton size="small" onClick={() => { props.onRemove() }}>
+                    <Remove/>
+                </IconButton>
+                : null}
+
         </Box>
     )
 }
