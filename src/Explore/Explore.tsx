@@ -1,26 +1,22 @@
 import { FetchAudioBlob, FetchPut } from '../RestOperations/RestOperations'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Chooser from './Chooser'
 import { GetMasterpieceData } from '../RestOperations/ServerRestOperations'
 import { GetS3Audio } from './AudioUtil'
-import MPSnippetContainer from './Snippet/MPSnippetContainer'
 import { Box } from '@mui/material'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg'
+import { fetchFile, FFmpeg } from '@ffmpeg/ffmpeg'
+import MPWorkspace from './Snippet/MPWorkspace'
 
-export default function Explore (): ReactJSXElement {
-    // const [imageSrc, setImageSrc] = useState();
-    // const [text, setText] = useState();
+interface ExploreProps {
+    ffmpeg: FFmpeg
+}
+
+export default function Explore (props: ExploreProps): ReactJSXElement {
+    const ffmpeg = props.ffmpeg
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const [audioUrl, setAudioUrl] = useState(require('../9to5.mp3'))
     const [combinedAudioUrl, setCombinedAudioUrl] = useState('')
-    // setAudioUrl(require("./9to5.mp3"));
-    // useEffect(() => {
-    //   FetchGetFile(setImageSrc);
-    // }, []);
-    const ffmpeg = createFFmpeg({
-        log: true
-    })
 
     const PlayAudio = async (): Promise<void> => {
         const audio = new Audio(audioUrl)
@@ -43,11 +39,6 @@ export default function Explore (): ReactJSXElement {
         // await ffmpeg.run('-i', 'test.mp3', 'test.wav')
     }
 
-    console.log('Loading ffmpeg-core.js')
-    useEffect(() => {
-        void ffmpeg.load()
-    }, [])
-
     return (
         <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" >
             <h1>Welcome to Masterpiece</h1>
@@ -65,7 +56,7 @@ export default function Explore (): ReactJSXElement {
                 <Chooser/>
             </div>
 
-            <MPSnippetContainer ffmpeg={ffmpeg} style={{ backgroundColor: 'beige', paddingTop: '4px', paddingBottom: '4px', paddingLeft: '8px', paddingRight: '8px', width: '500px' }}/>
+            <MPWorkspace ffmpeg={ffmpeg}/>
 
         </Box>
     )

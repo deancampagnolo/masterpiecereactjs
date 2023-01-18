@@ -25,8 +25,15 @@ export default class AudioControllerModel {
         void this.refreshMaster() // TODO Make sure this actually works lol
     }
 
+    reset (): void {
+        this.audioControllerMap.clear()
+        this.audioControllerMap.set(0, new AudioController(''))
+    }
+
     async refreshMaster (): Promise<boolean> {
-        if (this.ffmpeg.isLoaded()) {
+        // FIXME: refresh Master receives two inputs when 'next' button is initially hit
+        console.log(this.audioControllerMap.size)
+        if (this.ffmpeg.isLoaded() && this.audioControllerMap.size > 1) {
             const fileArgumentList: string[] = []
             for (const [key, value] of this.audioControllerMap.entries()) {
                 if (key !== 0) {

@@ -6,8 +6,8 @@ import MPAddSnippet from './MPAddSnippet'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { useEffect, useRef, useState } from 'react'
 import MPSnippetModel from './MPSnippetModel'
-import AudioControllerModel from '../Utils/AudioControllerModel'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
+import AudioControllerModel from '../Utils/AudioControllerModel'
 
 interface MPSnippetContainerProps {
     style?: React.CSSProperties
@@ -15,16 +15,8 @@ interface MPSnippetContainerProps {
 }
 
 export default function MPSnippetContainer (props: MPSnippetContainerProps): ReactJSXElement {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    // const audioControllers = useRef([new AudioController(require('../../9to5.mp3')), new AudioController(require('../../abc.wav'))])
-    // audioControllers.current.push()
-
     const audioControllerModel = useRef(new AudioControllerModel(props.ffmpeg))
 
-    /* eslint-disable @typescript-eslint/no-var-requires */
-    // const [snippetControllers, setSnippetControllers] = useState([new MPSnippetModel('a', require('../../9to5.mp3')),
-    //     new MPSnippetModel('b', require('../../abc.wav')), new MPSnippetModel('c', require('../../9to5.mp3')),
-    //     new MPSnippetModel('d', require('../../abc.wav'))])
     const [snippetControllers, setSnippetControllers] = useState([] as MPSnippetModel[])
 
     const addSnippetController = (selectedFile: string): void => {
@@ -34,6 +26,9 @@ export default function MPSnippetContainer (props: MPSnippetContainerProps): Rea
     }
 
     useEffect(() => {
+        console.log('added initial snippet controller')
+        audioControllerModel.current.reset() // TODO: Figure out why this effect gets called multiple times
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         addSnippetController(require('../../9to5.mp3'))
     }, [])
 
