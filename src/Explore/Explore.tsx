@@ -1,12 +1,11 @@
-import { FetchAudioBlob, FetchPut } from '../RestOperations/RestOperations'
+import { FetchAudioBlob, FetchPut } from '../RestOperations/SimpleRestOperations'
 import React, { useState } from 'react'
 import Chooser from './Chooser'
-import { GetMasterpieceData } from '../RestOperations/ServerRestOperations'
 import { GetS3Audio } from './AudioUtil'
 import { Box } from '@mui/material'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { fetchFile, FFmpeg } from '@ffmpeg/ffmpeg'
-import MPWorkspace from './Snippet/MPWorkspace'
+import MPWorkspace from './Snippet/MPWorkspaceContainer'
 
 interface ExploreProps {
     ffmpeg: FFmpeg
@@ -51,7 +50,6 @@ export default function Explore (props: ExploreProps): ReactJSXElement {
                 <button onClick={async () => { await GetS3Audio(setAudioUrl, 'aRealHoot.mp3') }}> Change Audio (s3)</button>
                 <button onClick={PlayAudio}> Play </button>
                 <button onClick={PlayCombinedAudio}> Play Combined</button>
-                <button onClick={GetMasterpieceData}>Get Masterpiece Data</button>
                 {/* eslint-enable @typescript-eslint/no-misused-promises */}
                 <Chooser/>
             </div>

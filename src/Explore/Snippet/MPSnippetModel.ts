@@ -1,6 +1,6 @@
 export default class MPSnippetModel {
-    get id (): number {
-        return this._id
+    get audioLocalUUID (): number {
+        return this._audioLocalUUID
     }
 
     get resourceUrl (): string {
@@ -13,11 +13,11 @@ export default class MPSnippetModel {
 
     private readonly _name
     private readonly _resourceUrl
-    private readonly _id
+    private readonly _audioLocalUUID
 
     constructor (name: string, resourceUrl: string) {
         this._name = name
         this._resourceUrl = resourceUrl
-        this._id = Math.ceil(Math.random() * 10000000) // TODO use UUID (0 is reserved for master)
+        this._audioLocalUUID = Math.ceil(Math.random() * 10000000) // TODO use UUID (0 is reserved for master)
     }
 }

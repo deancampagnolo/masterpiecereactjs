@@ -18,7 +18,9 @@ class App extends Component {
             this.state.selectedFile
         )
 
-        PostS3File(this.state.selectedFile)
+        const files = [this.state.selectedFile]
+
+        PostS3File(files[0])
         // PostMasterpiece(new MasterpieceContribution(4, 'aba', this.state.selectedFile))
     }
 

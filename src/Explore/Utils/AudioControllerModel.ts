@@ -11,23 +11,39 @@ export default class AudioControllerModel {
         this.audioControllerMap.set(0, new AudioController(''))
     }
 
-    set (id: number, resourceUrl: string): void {
-        this.audioControllerMap.set(id, new AudioController(resourceUrl))
-        void this.refreshMaster()
+    set (audioLocalUUID: number, resourceUrl: string, allowRefreshMaster: boolean): void {
+        this.audioControllerMap.set(audioLocalUUID, new AudioController(resourceUrl))
+        if (allowRefreshMaster) {
+            void this.refreshMaster()
+        }
     }
 
-    get (id: number): AudioController {
-        return this.audioControllerMap.get(id)
+    get (audioLocalUUID: number): AudioController {
+        return this.audioControllerMap.get(audioLocalUUID)
     }
 
-    remove (id: number): void {
-        this.audioControllerMap.delete(id)
+    getAllUrl (): string[] {
+        const urls = []
+        for (const [key, value] of this.audioControllerMap.entries()) {
+            if (key !== 0) {
+                urls.push(value.getUrl())
+            }
+        }
+        return urls
+    }
+
+    remove (audioLocalUUID: number): void {
+        this.audioControllerMap.delete(audioLocalUUID)
         void this.refreshMaster() // TODO Make sure this actually works lol
     }
 
     reset (): void {
         this.audioControllerMap.clear()
         this.audioControllerMap.set(0, new AudioController(''))
+    }
+
+    clear (): void {
+        this.audioControllerMap.clear()
     }
 
     async refreshMaster (): Promise<boolean> {
