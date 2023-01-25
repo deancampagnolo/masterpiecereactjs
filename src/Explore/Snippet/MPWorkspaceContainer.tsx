@@ -8,6 +8,7 @@ import AudioControllerModel from '../Utils/AudioControllerModel'
 import MPSnippetModel from './MPSnippetModel'
 import MPWorkspaceContainerModel from './MPWorkspaceContainerModel'
 import { FetchMP, PostMP } from '../../RestOperations/MPRestOperations'
+import LoadIdButton from './LoadIdButton'
 
 interface MPWorkspaceContainerProps {
     ffmpeg: FFmpeg
@@ -20,17 +21,22 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
     const CreateNextMasterpiece = (): void => {
         setContainerKey(Math.floor(Math.random() * 10000000))// FIXME temporary
     }
-    useEffect(() => {
-        FetchMP(7, props.ffmpeg).then((newModel) => {
+    const LoadNextMasterpiece = (songId: number): void => {
+        setIsLoaded(false)
+        CreateNextMasterpiece()
+        FetchMP(songId, props.ffmpeg).then((newModel) => {
             setIsLoaded(true)
             setMPWorkspaceContainerModel(newModel)
         }).catch(e => { console.log(e) })
+    }
+    useEffect(() => {
+        LoadNextMasterpiece(1)
     }, []) // deps may include containerKey
 
     return (
         <div>
             { isLoaded
-                ? <MPWorkspace key={containerKey} ffmpeg={props.ffmpeg} onNext={CreateNextMasterpiece}
+                ? <MPWorkspace key={containerKey} ffmpeg={props.ffmpeg} onNext={CreateNextMasterpiece} onLoad={LoadNextMasterpiece}
                     initialAudioControllerModel={mpWorkspaceContainerModel.audioControllerModel}
                     initialMPSnippetModels={mpWorkspaceContainerModel.mpSnippetModels}/>
                 : null
@@ -42,6 +48,7 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
 interface MPWorkspaceProps {
     ffmpeg: FFmpeg
     onNext: () => void
+    onLoad: (songId: number) => void
     initialAudioControllerModel: AudioControllerModel
     initialMPSnippetModels: MPSnippetModel[]
 }
@@ -55,13 +62,6 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
         audioControllerModel.current.set(mpSnippetModel.audioLocalUUID, mpSnippetModel.resourceUrl, true)
         setSnippetControllers([...snippetControllers, mpSnippetModel])
     }
-
-    // useEffect(() => {
-    //     console.log('added initial snippet controller')
-    //     audioControllerModel.current.reset() // TODO: Figure out why this effect gets called multiple times
-    //     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    //     addSnippetController(require('../../9to5.mp3'))
-    // }, [])
 
     const onRemove = (id: number): void => {
         audioControllerModel.current.remove(id)
@@ -79,6 +79,7 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
                     { backgroundColor: 'beige', paddingTop: '4px', paddingBottom: '4px', paddingLeft: '8px', paddingRight: '8px', width: '500px' }
                 }/>
             <Button onClick={props.onNext}>Next</Button>
+            <LoadIdButton onLoad={props.onLoad}/>
             <Button onClick={onSubmit}>Submit</Button>
         </div>
     )

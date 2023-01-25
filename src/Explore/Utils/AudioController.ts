@@ -2,7 +2,7 @@
 export default class AudioController {
     private audio
 
-    constructor (audioUrl: string) {
+    constructor (audioUrl: string | undefined) {
         this.audio = new Audio(audioUrl) // preload is default auto
     }
 

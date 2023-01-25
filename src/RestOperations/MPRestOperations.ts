@@ -3,20 +3,21 @@ import MPSnippetModel from '../Explore/Snippet/MPSnippetModel'
 import AudioControllerModel from '../Explore/Utils/AudioControllerModel'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { GetMasterpieceData, GetRandomMasterpieceData, PostMPContribution } from './ServerRestOperations'
-import { PostS3Files } from './S3RestOperations'
-import MasterpieceContribution from '../MasterpieceContribution'
+import { GetS3FileBlobURLs, PostS3Files } from './S3RestOperations'
+import MasterpieceBackendContribution from './MasterpieceBackendContribution'
 
 export const PostMP = async (urls: string[]): Promise<void> => {
     const files = [] as Blob[]
 
     for (const url of urls) {
+        // fetch is used because it is getting local urls
         await fetch(url).then(async res => await res.blob().then(blob => files.push(blob)))
     }
     let newS3Urls = [] as (string[] | null)
     await PostS3Files(files).then(newUrls => { newS3Urls = newUrls })
 
     if (newS3Urls != null) {
-        const mpContriubtion = new MasterpieceContribution(99, 'pog', newS3Urls)
+        const mpContriubtion = new MasterpieceBackendContribution(99, 'pog', newS3Urls)
 
         await PostMPContribution(mpContriubtion)
     } else {
@@ -38,9 +39,17 @@ export const FetchMP = async (mpID: number | null, ffmpeg: FFmpeg): Promise<MPWo
         urls.push(require('../9to5.mp3'))
     } else {
         if (mpID != null) {
-            await GetMasterpieceData(mpID)
+            const mpFrontendContribution = await GetMasterpieceData(mpID)
+            if (mpFrontendContribution?.pathsToAudio != null) {
+                const files = await GetS3FileBlobURLs(mpFrontendContribution?.pathsToAudio)
+                if (files != null) {
+                    files.forEach((value) => {
+                        urls.push(value)
+                    })
+                }
+            }
         } else {
-            await GetRandomMasterpieceData()
+            await GetRandomMasterpieceData() // TODO
         }
     }
     urls.forEach(url => { addAudio(audioControllerModel, mpSnippetModels, url) })

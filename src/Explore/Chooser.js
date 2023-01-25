@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { PostS3File } from '../RestOperations/S3RestOperations'
+import { PostS3Files } from '../RestOperations/S3RestOperations'
 
 class App extends Component {
     state = {
@@ -20,7 +20,7 @@ class App extends Component {
 
         const files = [this.state.selectedFile]
 
-        PostS3File(files[0])
+        PostS3Files(files)
         // PostMasterpiece(new MasterpieceContribution(4, 'aba', this.state.selectedFile))
     }
 

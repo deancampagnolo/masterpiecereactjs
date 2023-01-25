@@ -1,7 +1,6 @@
 import { FetchAudioBlob, FetchPut } from '../RestOperations/SimpleRestOperations'
 import React, { useState } from 'react'
 import Chooser from './Chooser'
-import { GetS3Audio } from './AudioUtil'
 import { Box } from '@mui/material'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { fetchFile, FFmpeg } from '@ffmpeg/ffmpeg'
@@ -47,7 +46,6 @@ export default function Explore (props: ExploreProps): ReactJSXElement {
                 <button onClick={doTranscode}> Do Transcode </button>
                 <button onClick={async () => { await FetchPut(34) }}> Put 34</button>
                 <button onClick={async () => { await FetchAudioBlob(setAudioUrl) }}> Change Audio (server)</button>
-                <button onClick={async () => { await GetS3Audio(setAudioUrl, 'aRealHoot.mp3') }}> Change Audio (s3)</button>
                 <button onClick={PlayAudio}> Play </button>
                 <button onClick={PlayCombinedAudio}> Play Combined</button>
                 {/* eslint-enable @typescript-eslint/no-misused-promises */}

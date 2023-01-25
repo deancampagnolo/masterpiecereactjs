@@ -8,7 +8,7 @@ export default class AudioControllerModel {
     constructor (ffmpeg: FFmpeg) {
         this.ffmpeg = ffmpeg
         this.audioControllerMap = new Map()
-        this.audioControllerMap.set(0, new AudioController(''))
+        this.audioControllerMap.set(0, new AudioController(undefined))
     }
 
     set (audioLocalUUID: number, resourceUrl: string, allowRefreshMaster: boolean): void {

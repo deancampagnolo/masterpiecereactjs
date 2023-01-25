@@ -6,7 +6,7 @@ import { createFFmpeg } from '@ffmpeg/ffmpeg'
 
 function App (): ReactJSXElement {
     const ffmpeg = createFFmpeg({
-        log: true
+        // log: true
     })
     useEffect(() => {
         console.log('Loading ffmpeg-core.js')
