@@ -46,7 +46,7 @@ export const PostS3Files = async (files: Blob[]): Promise<string[] | null> => {
 
         const res = await axios.put(url, data)
 
-        // console.log(res)
+        console.log(res)
         index++
     } // FIXME: This is probably sequential https://stackoverflow.com/questions/66868195/running-for-loop-in-parallel-using-async-await-promises
     // TODO: verify that each async postS3File call works

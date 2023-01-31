@@ -45,9 +45,6 @@ export default function MPWorkspaceContainer (): ReactJSXElement {
                     initialMPSnippetModels={mpWorkspaceContainerModel.mpSnippetModels}/>
                 : null
             }
-            <button onClick={() => {
-                console.log('button Pressed')
-            }}/>
         </div>
     )
 }

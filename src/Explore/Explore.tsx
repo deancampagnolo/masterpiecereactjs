@@ -5,10 +5,6 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { loaded, Player, start, Transport } from 'tone'
 import MPWorkspaceContainer from './Snippet/MPWorkspaceContainer'
 
-// https://stackoverflow.com/questions/57155167/web-audio-api-playing-synchronized-sounds
-// https://howlerjs.com/
-// https://tonejs.github.io/
-
 export default function Explore (): ReactJSXElement {
     return (
         <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" >
@@ -46,7 +42,7 @@ function Sandbox (): ReactJSXElement {
 
         // const player = new Player(require('../9to5.mp3')).toDestination().sync().start(0).stop('6m')
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const player = new Player(require('../abc.wav')).toDestination().sync().start(0).stop('6m')
+        new Player(require('../abc.wav')).toDestination().sync().start(0).stop('6m')
         void loaded().then(() => {
             void start()
         })
