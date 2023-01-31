@@ -1,10 +1,9 @@
 import MPWorkspaceContainerModel from '../Explore/Snippet/MPWorkspaceContainerModel'
 import MPSnippetModel from '../Explore/Snippet/MPSnippetModel'
-import AudioControllerModel from '../Explore/Utils/AudioControllerModel'
-import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { GetMasterpieceData, PostMPContribution } from './ServerRestOperations'
 import { GetS3FileBlobURLs, PostS3Files } from './S3RestOperations'
 import MasterpieceBackendContribution from './MasterpieceBackendContribution'
+import AudioControllerModel from '../Explore/Utils/AudioControllerModel'
 
 export const PostMP = async (urls: string[]): Promise<void> => {
     const convertLocalUrlsToBlob = async (urls: string[]): Promise<Blob[]> => {
@@ -30,7 +29,7 @@ export const PostMP = async (urls: string[]): Promise<void> => {
     await postMPContribution(s3FileUrls)
 }
 
-export const FetchMP = async (mpID: number | null, ffmpeg: FFmpeg): Promise<MPWorkspaceContainerModel> => {
+export const FetchMP = async (mpID: number | null): Promise<MPWorkspaceContainerModel> => {
     const initializeLocalMP = (): string[] => {
         const urls = [] as string[]
         // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -61,7 +60,7 @@ export const FetchMP = async (mpID: number | null, ffmpeg: FFmpeg): Promise<MPWo
         return urls
     }
 
-    const audioControllerModel = new AudioControllerModel(ffmpeg)
+    const audioControllerModel = new AudioControllerModel()
     const mpSnippetModels = [] as MPSnippetModel[]
 
     const urls = await getMPData(mpID)
@@ -74,7 +73,7 @@ export const FetchMP = async (mpID: number | null, ffmpeg: FFmpeg): Promise<MPWo
 }
 
 const addAudio = (audioControllerModel: AudioControllerModel, mpSnippetModels: MPSnippetModel[], resourceUrl: string): void => {
-    const mpSnippetModel = new MPSnippetModel(resourceUrl, resourceUrl)
+    const mpSnippetModel = new MPSnippetModel(resourceUrl)
     mpSnippetModels.push(mpSnippetModel)
-    audioControllerModel.set(mpSnippetModel.audioLocalUUID, resourceUrl, false)
+    audioControllerModel.addAudio(mpSnippetModel.audioLocalUUID, resourceUrl, '0', '6m')
 }

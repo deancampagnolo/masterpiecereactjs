@@ -8,6 +8,7 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import MPSnippetModel from './MPSnippetModel'
 
 import AudioControllerModel from '../Utils/AudioControllerModel'
+import MPSnippetMaster from './MPSnippetMaster'
 
 interface MPSnippetContainerProps {
     style?: React.CSSProperties
@@ -18,17 +19,23 @@ interface MPSnippetContainerProps {
 }
 
 export default function MPSnippetContainer (props: MPSnippetContainerProps): ReactJSXElement {
+    const onMute = (): void => {}
+    const onSolo = (): void => {}
+    const onPlayPause = (): void => {
+        props.audioControllerModel.current.playMaster()
+    }
     return (
         <div>
             <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" style={props.style}>
                 {props.snippetControllers.map((item, index) => {
                     return (
-                        <MPSnippet key={item.audioLocalUUID} title={item.name} audioController={props.audioControllerModel.current.get(item.audioLocalUUID)}
-                            onRemove={() => { props.onRemove(item.audioLocalUUID) }}/>
+                        <MPSnippet key={item.audioLocalUUID} title={item.name}
+                            onRemove={() => { props.onRemove(item.audioLocalUUID) }} onMute={onMute} onSolo={onSolo}/>
                     )
                 })}
-                <MPSnippet title='Master' audioController={props.audioControllerModel.current.get(0)} onRemove={() => {}} removeEnabled={false}/>
+                <MPSnippetMaster title='Master' onPlayPause={onPlayPause}/>
                 <MPAddSnippet title="add audio file here" submitOnClick={props.onAdd }/>
+                <button onClick={props.audioControllerModel.current.start}>start</button>
             </Box>
         </div>
     )

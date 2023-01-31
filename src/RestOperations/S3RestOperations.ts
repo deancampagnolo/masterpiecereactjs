@@ -3,7 +3,7 @@ import { GetS3FilesURLGet, GetS3FilesURLPost } from './ServerRestOperations'
 
 export const GetS3FileBlobURLs = async (filenames: string[]): Promise<string[] | null> => {
     const urls = await GetS3FilesURLGet(filenames)
-    console.log(urls)
+    // console.log(urls)
     const blobUrls = []
 
     if (urls != null) {
@@ -11,10 +11,10 @@ export const GetS3FileBlobURLs = async (filenames: string[]): Promise<string[] |
             const res = await axios.get(url, {
                 responseType: 'blob'
             })
-            console.log(res.data)
+            // console.log(res.data)
 
             const bloburl = URL.createObjectURL(res.data)
-            console.log(bloburl)
+            // console.log(bloburl)
             blobUrls.push(bloburl)
         }
 
@@ -46,7 +46,7 @@ export const PostS3Files = async (files: Blob[]): Promise<string[] | null> => {
 
         const res = await axios.put(url, data)
 
-        console.log(res)
+        // console.log(res)
         index++
     } // FIXME: This is probably sequential https://stackoverflow.com/questions/66868195/running-for-loop-in-parallel-using-async-await-promises
     // TODO: verify that each async postS3File call works

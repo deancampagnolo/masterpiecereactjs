@@ -5,7 +5,6 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
-    "@ffmpeg/ffmpeg": "^0.9.3",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.0",
     "@testing-library/jest-dom": "^5.16.5",
@@ -21,6 +20,7 @@
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "reflect-metadata": "^0.1.13",
+    "tone": "^14.7.77",
     "typescript": "*",
     "web-vitals": "^2.1.4"
   },

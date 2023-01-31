@@ -1,71 +1,60 @@
-import AudioController from './AudioController'
-import { fetchFile, FFmpeg } from '@ffmpeg/ffmpeg'
+import { loaded, Player, start, Transport } from 'tone'
+import { Time } from 'tone/build/esm/core/type/Units'
+import { Source } from 'tone/build/esm/source/Source'
+
+class SourceWrapper {
+    constructor (public source: Source<any>, public src: string) {
+    }
+}
 
 export default class AudioControllerModel {
     private readonly audioControllerMap
-    private readonly ffmpeg
 
-    constructor (ffmpeg: FFmpeg) {
-        this.ffmpeg = ffmpeg
-        this.audioControllerMap = new Map()
-        this.audioControllerMap.set(0, new AudioController(undefined))
+    constructor () {
+        Transport.bpm.value = 100
+        Transport.loop = true
+        Transport.loopStart = '0'
+        Transport.loopEnd = '8m'
+        this.audioControllerMap = new Map<number, SourceWrapper>()
     }
 
-    set (audioLocalUUID: number, resourceUrl: string, allowRefreshMaster: boolean): void {
-        this.audioControllerMap.set(audioLocalUUID, new AudioController(resourceUrl))
-        if (allowRefreshMaster) {
-            void this.refreshMaster()
+    addAudio (audioLocalUUID: number, src: string, start?: Time, stop?: Time): void {
+        const player = new Player(src).toDestination().sync().start(start).stop(stop)
+        this.audioControllerMap.set(audioLocalUUID, { source: player, src })
+    }
+
+    removeAudio (audioLocalUUID: number): boolean {
+        const sourceWrapper = this.audioControllerMap.get(audioLocalUUID)
+        if (sourceWrapper != null) {
+            sourceWrapper.source.disconnect()
+            this.audioControllerMap.delete(audioLocalUUID)
+            return true
         }
+        return false
     }
 
-    get (audioLocalUUID: number): AudioController {
-        return this.audioControllerMap.get(audioLocalUUID)
+    playMaster (): void {
+        Transport.start()
+    }
+
+    start (): void {
+        void loaded().then(() => {
+            void start()
+        })
     }
 
     getAllUrl (): string[] {
-        const urls = []
+        const urls = [] as string[]
         for (const [key, value] of this.audioControllerMap.entries()) {
             if (key !== 0) {
-                urls.push(value.getUrl())
+                urls.push(value.src)
             }
         }
         return urls
     }
 
-    remove (audioLocalUUID: number): void {
-        this.audioControllerMap.delete(audioLocalUUID)
-        void this.refreshMaster() // TODO Make sure this actually works lol
-    }
-
-    reset (): void {
-        this.audioControllerMap.clear()
-        this.audioControllerMap.set(0, new AudioController(''))
-    }
-
     clear (): void {
+        Transport.cancel()
         this.audioControllerMap.clear()
-    }
-
-    async refreshMaster (): Promise<boolean> {
-        // FIXME: refresh Master receives two inputs when 'next' button is initially hit
-        console.log(this.audioControllerMap.size)
-        if (this.ffmpeg.isLoaded() && this.audioControllerMap.size > 1) {
-            const fileArgumentList: string[] = []
-            for (const [key, value] of this.audioControllerMap.entries()) {
-                if (key !== 0) {
-                    const newFileName = key.toString().concat('.mp3')
-                    this.ffmpeg.FS('writeFile', newFileName, await fetchFile(value.getUrl()))
-                    fileArgumentList.push('-i', newFileName)
-                }
-            }
-
-            await this.ffmpeg.run(...fileArgumentList, '-filter_complex', 'amix=inputs=' + (fileArgumentList.length / 2).toString() + ':duration=longest', '-preset', 'ultrafast', 'output.mp3')
-            const data = this.ffmpeg.FS('readFile', 'output.mp3')
-            const url = URL.createObjectURL(new Blob([data.buffer], { type: 'audio/mpeg' }))
-            this.audioControllerMap.get(0).setAudio(url)
-            return true
-        } else {
-            return false
-        }
     }
 }
