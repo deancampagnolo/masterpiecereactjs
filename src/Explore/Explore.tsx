@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box} from '@mui/material'
+import { Box } from '@mui/material'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import MPWorkspaceContainer from './Snippet/MPWorkspaceContainer'
 
