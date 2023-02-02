@@ -1,5 +1,5 @@
 import MPSnippetModel from './MPSnippetModel'
-import AudioControllerModel from '../Utils/AudioControllerModel'
+import AudioControllerModel, { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
 
 export default class MPWorkspaceContainerModel { // FIXME this name doesn't seem correct
     private readonly _audioControllerModel
@@ -18,6 +18,6 @@ export default class MPWorkspaceContainerModel { // FIXME this name doesn't seem
     }
 
     static BlankMPWorkspaceContainerModel (): MPWorkspaceContainerModel {
-        return new MPWorkspaceContainerModel(new AudioControllerModel(), [])
+        return new MPWorkspaceContainerModel(AudioControllerModelHelper.getInstance(), [])
     }
 }

@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import Typography from '@mui/material/Typography'
-import { PlayArrow, UnfoldMore } from '@mui/icons-material'
+import { Pause, PlayArrow, UnfoldMore } from '@mui/icons-material'
 import { Box, Collapse, IconButton } from '@mui/material'
 import { useState } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
@@ -13,12 +13,18 @@ interface MPSnippetMasterProps {
 
 export default function MPSnippetMaster (props: MPSnippetMasterProps): ReactJSXElement {
     const [isExpanded, setIsExpanded] = useState(false)
+    const [isPlaying, setIsPlaying] = useState(false)
+
+    const onPlayClicked = (): void => {
+        setIsPlaying(!isPlaying)
+        props.onPlayPause()
+    }
 
     return (
         <div style={{ backgroundColor: 'lightblue', width: '100%', borderRadius: '6px', marginTop: '4px', marginBottom: '4px' }}>
             <Box display="flex" flexDirection="column">
                 <TopPortionMaster title={props.title} isExpanded={isExpanded} setIsExpanded={setIsExpanded}
-                    onClick={props.onPlayPause} />
+                    onClick={onPlayClicked} isPlaying={isPlaying}/>
                 <CollapsablePortionMaster isExpanded={isExpanded}/>
             </Box>
         </div>
@@ -30,13 +36,14 @@ interface TopPortionMasterProps {
     setIsExpanded: any
     isExpanded: boolean
     onClick: React.MouseEventHandler<HTMLButtonElement> | undefined
+    isPlaying: boolean
 }
 
 function TopPortionMaster (props: TopPortionMasterProps): ReactJSXElement {
     return (
         <Box display="flex" flexDirection="row" style={{ flex: 1 }}>
             <IconButton size="small" onClick={props.onClick}>
-                <PlayArrow/>
+                {props.isPlaying ? <Pause/> : <PlayArrow/>}
             </IconButton>
 
             <Typography align="left" style={{ flex: 10, marginLeft: '10px', height: '100%', backgroundColor: 'brown' }}>

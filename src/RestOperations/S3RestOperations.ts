@@ -9,7 +9,10 @@ export const GetS3FileBlobURLs = async (filenames: string[]): Promise<string[] |
     if (urls != null) {
         for (const url of urls) {
             const res = await axios.get(url, {
-                responseType: 'blob'
+                responseType: 'blob',
+                headers: {
+                    'Content-Type': 'audio/mpeg'
+                } // this doesn't seem to work for some reason
             })
             // console.log(res.data)
 
@@ -41,11 +44,7 @@ export const PostS3Files = async (files: Blob[]): Promise<string[] | null> => {
     }
     let index = 0
     for (const url of urls) {
-        const data = new FormData()
-        data.append('file', files[index])
-
-        const res = await axios.put(url, data)
-
+        const res = await axios.put(url, files[index], { headers: { 'Content-Type': 'audio/mpeg' } })
         console.log(res)
         index++
     } // FIXME: This is probably sequential https://stackoverflow.com/questions/66868195/running-for-loop-in-parallel-using-async-await-promises

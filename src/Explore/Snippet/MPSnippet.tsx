@@ -38,17 +38,22 @@ interface TopPortionProps {
 
 function TopPortion (props: TopPortionProps): ReactJSXElement {
     const [title, setTitle] = useState(props.defaultTitle)
+    const [isMuted, setIsMuted] = useState(false)
 
     const onTitleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
         setTitle(e.target.value)
     }
 
+    const onMuteClicked = (): void => {
+        setIsMuted(!isMuted)
+        props.onMute()
+    }
+
     return (
         <Box display="flex" flexDirection="row" style={{ flex: 1 }}>
 
-            <IconButton size="small" onClick={props.onMute}>
-                <VolumeUp/>
-                <VolumeOff/>
+            <IconButton size="small" onClick={onMuteClicked}>
+                {isMuted ? <VolumeOff/> : <VolumeUp/>}
             </IconButton>
 
             <IconButton size="small" onClick={props.onSolo}>

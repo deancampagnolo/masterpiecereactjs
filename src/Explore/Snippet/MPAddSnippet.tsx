@@ -13,7 +13,11 @@ interface MPAddSnippetProps {
 export default function MPAddSnippet (props: MPAddSnippetProps): ReactJSXElement {
     const [selectedFile, setSelectedFile] = useState('')
 
-    const onFileChange = (event: any): void => { setSelectedFile(URL.createObjectURL(event.target.files[0])) }
+    const onFileChange = (event: any): void => {
+        // I once got a bug where a chosen correct mp3 file errored with tone.js saying that it wasnt the correct content type
+        // console.log(event.target.files[0])
+        setSelectedFile(URL.createObjectURL(event.target.files[0]))
+    }
 
     const handleSubmitOnClick = (file: string): void => {
         setSelectedFile('')

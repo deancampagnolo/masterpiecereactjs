@@ -19,10 +19,12 @@ interface MPSnippetContainerProps {
 }
 
 export default function MPSnippetContainer (props: MPSnippetContainerProps): ReactJSXElement {
-    const onMute = (): void => {}
+    const onMute = (id: number): void => {
+        props.audioControllerModel.current.toggleMuteAudio(id)
+    }
     const onSolo = (): void => {}
     const onPlayPause = (): void => {
-        props.audioControllerModel.current.playMaster()
+        props.audioControllerModel.current.toggleMaster()
     }
     return (
         <div>
@@ -30,7 +32,7 @@ export default function MPSnippetContainer (props: MPSnippetContainerProps): Rea
                 {props.snippetControllers.map((item, index) => {
                     return (
                         <MPSnippet key={item.audioLocalUUID} title={item.name}
-                            onRemove={() => { props.onRemove(item.audioLocalUUID) }} onMute={onMute} onSolo={onSolo}/>
+                            onRemove={() => { props.onRemove(item.audioLocalUUID) }} onMute={() => { onMute(item.audioLocalUUID) }} onSolo={onSolo}/>
                     )
                 })}
                 <MPSnippetMaster title='Master' onPlayPause={onPlayPause}/>

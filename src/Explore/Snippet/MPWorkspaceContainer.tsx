@@ -19,11 +19,13 @@ export default function MPWorkspaceContainer (): ReactJSXElement {
         useState(MPWorkspaceContainerModel.BlankMPWorkspaceContainerModel())
 
     const CreateBlankMasterpiece = (): void => {
+        mpWorkspaceContainerModel.audioControllerModel.clear()
         setContainerKey(Math.floor(Math.random() * 10000000))// FIXME temporary
         setMPWorkspaceContainerModel(MPWorkspaceContainerModel.BlankMPWorkspaceContainerModel())
     }
     const LoadNextMasterpiece = (songId: number): void => {
         setIsLoaded(false)
+        mpWorkspaceContainerModel.audioControllerModel.clear()
         FetchMP(songId).then((newModel) => {
             setContainerKey(Math.floor(Math.random() * 10000000))// FIXME temporary
             setMPWorkspaceContainerModel(newModel)
