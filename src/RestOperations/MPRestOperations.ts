@@ -3,79 +3,65 @@ import MPSnippetModel from '../Explore/Snippet/MPSnippetModel'
 import { GetMasterpieceData, PostMPContribution } from './ServerRestOperations'
 import { GetS3FileBlobURLs, PostS3Files } from './S3RestOperations'
 import MasterpieceBackendContribution from './MasterpieceBackendContribution'
-import AudioControllerModel, { AudioControllerModelHelper } from '../Explore/Utils/AudioControllerModel'
+import { AudioControllerModelHelper } from '../Explore/Utils/AudioControllerModel'
+import MasterpieceSnippetContribution from './MasterpieceSnippetContribution'
+import MPModel from '../Explore/Snippet/MPModel'
 
-export const PostMP = async (urls: string[]): Promise<void> => {
+export const PostMP = async (localUrls: string[], snippetControllers: MPSnippetModel[], mpModel: MPModel): Promise<void> => {
     const convertLocalUrlsToBlob = async (urls: string[]): Promise<Blob[]> => {
         const files = [] as Blob[]
         for (const url of urls) {
-            // fetch is used because it is getting local urls
+            // fetch is used because it is getting local localUrls
             await fetch(url).then(async res => await res.blob().then(blob => files.push(blob)))
         }
         return files
     }
-    const postMPContribution = async (s3Urls: string[] | null): Promise<void> => {
-        if (s3Urls != null) {
-            const mpContriubtion = new MasterpieceBackendContribution(99, 'pog', s3Urls)
-
-            await PostMPContribution(mpContriubtion)
-        } else {
-            console.error('s3FileUrls are null')
-        }
+    const createMasterpieceBackendContribution = (s3Urls: string[], mpSnippetModels: MPSnippetModel[], mpModel: MPModel): MasterpieceBackendContribution => {
+        const snippetContributions = [] as MasterpieceSnippetContribution[]
+        s3Urls?.forEach((value, index) => {
+            snippetContributions.push(new MasterpieceSnippetContribution(value, mpSnippetModels[index].name))
+        })
+        return new MasterpieceBackendContribution(99, mpModel.title, snippetContributions)
     }
 
-    const files = await convertLocalUrlsToBlob(urls)
+    // const localUrls = snippetData.map((value) => { return value.localSrc })
+    const files = await convertLocalUrlsToBlob(localUrls)
     const s3FileUrls = await PostS3Files(files)
-    await postMPContribution(s3FileUrls)
+    if (s3FileUrls != null) {
+        await PostMPContribution(createMasterpieceBackendContribution(s3FileUrls, snippetControllers, mpModel))
+    } else {
+        console.error('s3Files are null')
+    }
 }
 
-export const FetchMP = async (mpID: number | null): Promise<MPWorkspaceContainerModel> => {
-    const initializeLocalMP = (): string[] => {
-        const urls = [] as string[]
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        urls.push(require('../9to5.mp3'))
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        urls.push(require('../abc.wav'))
-        return urls
-    }
-    const getMPData = async (mpID: number | null): Promise<string[] | null> => {
-        if (mpID != null) {
-            return (mpID === 7) ? initializeLocalMP() : await getMPDataByID(mpID)
-        } else {
-            // await GetRandomMasterpieceData() // TODO
-            return null
-        }
-    }
-    const getMPDataByID = async (mpID: number): Promise<string[]> => {
-        const urls = [] as string[]
-        const mpFrontendContribution = await GetMasterpieceData(mpID)
-        if (mpFrontendContribution?.pathsToAudio != null) {
-            const files = await GetS3FileBlobURLs(mpFrontendContribution?.pathsToAudio)
-            if (files != null) {
-                files.forEach((value) => {
-                    urls.push(value)
-                })
-            }
-        }
-        return urls
-    }
-
+export const FetchMP = async (mpID: number): Promise<MPWorkspaceContainerModel> => {
     const audioControllerModel = AudioControllerModelHelper.getInstance()
     const mpSnippetModels = [] as MPSnippetModel[]
 
-    const urls = await getMPData(mpID)
+    const mpBackendContribution = await GetMasterpieceData(mpID)
+    const pathsToAudio = mpBackendContribution?.snippetContributions.map((value) => value.src)
+    const titles = mpBackendContribution?.snippetContributions.map((value) => value.snippetTitle)
+    const urls = [] as string[]
+    if (pathsToAudio != null) {
+        const files = await GetS3FileBlobURLs(pathsToAudio)
+        if (files != null) {
+            files.forEach((value) => {
+                urls.push(value)
+            })
+        }
+    }
     audioControllerModel.removeAllAudio()
-
-    if (urls !== null) { // FIXME urls I dont think should ever be null, this is probably a consequence of random mp not being completed yet
-        urls.forEach((url: string) => {
-            addAudio(audioControllerModel, mpSnippetModels, url)
+    if (urls != null && titles != null) { // FIXME urls I dont think should ever be null, this is probably a consequence of random mp not being completed yet
+        urls.forEach((url: string, index) => {
+            const mpSnippetModel = new MPSnippetModel(titles[index])
+            mpSnippetModels.push(mpSnippetModel)
+            audioControllerModel.addAudio(mpSnippetModel.audioLocalUUID, url, '0')
         })
     }
-    return new MPWorkspaceContainerModel(audioControllerModel, mpSnippetModels)
-}
 
-const addAudio = (audioControllerModel: AudioControllerModel, mpSnippetModels: MPSnippetModel[], resourceUrl: string): void => {
-    const mpSnippetModel = new MPSnippetModel(resourceUrl)
-    mpSnippetModels.push(mpSnippetModel)
-    audioControllerModel.addAudio(mpSnippetModel.audioLocalUUID, resourceUrl, '0', '6m')
+    const mpModelTitle = (mpBackendContribution != null) ? mpBackendContribution.title : 'default'
+    if (mpModelTitle === 'default') {
+        console.error('mpBackendContribution is null')
+    }
+    return new MPWorkspaceContainerModel(audioControllerModel, mpSnippetModels, new MPModel(mpModelTitle))
 }

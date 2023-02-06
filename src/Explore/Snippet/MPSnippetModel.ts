@@ -7,7 +7,11 @@ export default class MPSnippetModel {
         return this._name
     }
 
-    private readonly _name
+    set name (name: string) {
+        this._name = name
+    }
+
+    private _name
     private readonly _audioLocalUUID
 
     constructor (name: string) {

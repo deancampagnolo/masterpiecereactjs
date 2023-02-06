@@ -17,19 +17,45 @@ export class AudioControllerModelHelper {
     }
 }
 
+class TransportStateEmitter {
+    listeners = [] as Array<(arg0: boolean) => void>
+    emit (isPlaying: boolean): void {
+        this.listeners
+            .forEach(
+                (callback) => {
+                    // eslint-disable-next-line n/no-callback-literal
+                    callback(isPlaying)
+                }
+            )
+    }
+
+    on (callback: (arg0: boolean) => void): void {
+        this.listeners.push(callback)
+    }
+
+    reset (): void {
+        this.listeners = []
+    }
+}
+
 export default class AudioControllerModel {
     private readonly audioControllerMap
+    private readonly transportStateEmitter
 
     constructor () {
         Transport.bpm.value = 100
         Transport.loop = true
         Transport.loopStart = '0'
-        Transport.loopEnd = '8m'
+        Transport.loopEnd = '12m'
         this.audioControllerMap = new Map<number, SourceWrapper>()
+        this.transportStateEmitter = new TransportStateEmitter()
     }
 
     addAudio (audioLocalUUID: number, src: string, start?: Time, stop?: Time): void {
-        const player = new Player(src).toDestination().sync().start(start).stop(stop)
+        const player = new Player(src).toDestination().sync().start(start)
+        if (stop !== undefined) {
+            player.stop(stop)
+        }
         this.audioControllerMap.set(audioLocalUUID, { source: player, src })
     }
 
@@ -54,9 +80,28 @@ export default class AudioControllerModel {
     toggleMaster (): void {
         if (Transport.state === 'started') {
             Transport.pause()
+            this.emitTransportStateChanged(false)
         } else {
             Transport.start()
+            this.emitTransportStateChanged(true)
         }
+    }
+
+    pauseMaster (): void {
+        Transport.pause()
+        this.emitTransportStateChanged(false)
+    }
+
+    onTransportStateChanged (callback: (arg0: boolean) => void): void {
+        this.transportStateEmitter.on(callback)
+    }
+
+    clearTransportStateEmitter (): void {
+        this.transportStateEmitter.reset()
+    }
+
+    emitTransportStateChanged (isPlaying: boolean): void {
+        this.transportStateEmitter.emit(isPlaying)
     }
 
     toggleMuteAudio (audioLocalUUID: number): boolean {

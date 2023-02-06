@@ -1,8 +1,7 @@
-import MPContribution from './MasterpieceBackendContribution'
 import axios from 'axios'
 import { GetDomainName } from './RestOperationsUtil'
-import MasterpieceFrontendContribution from './MasterpieceFrontendContribution'
 import { plainToInstance } from 'class-transformer'
+import MasterpieceBackendContribution from './MasterpieceBackendContribution'
 
 const masterpieceApiURL = GetDomainName() + '/api/v1/masterpiece'
 const s3FilesApiURL = GetDomainName() + '/api/v1/s3Files'
@@ -13,16 +12,9 @@ const getRandomMasterpieceData = '/getRandomMasterpieceData'
 const getUrlGet = '/urlGet'
 const getUrlPostMp3s = '/urlPostMp3s'
 
-export const PostMPContribution = async (mpContribution: MPContribution): Promise<void> => {
-    // console.log('uploading masterpiece')
-
-    const data = new FormData()
-    Object.keys(mpContribution).forEach(key => { // @ts-expect-error FIXME
-        data.append(key, mpContribution[key])
-    }
-    )
-    const res2 = await axios.post(masterpieceApiURL + postMasterpiece, data)
-
+export const PostMPContribution = async (mpContribution: MasterpieceBackendContribution): Promise<void> => {
+    const res2 = await axios.post(masterpieceApiURL + postMasterpiece, mpContribution)
+    console.log(res2.status)
     alert('This song\'s id is: ' + String(res2.data)) // TODO: Move to a different spot, this isn't a good place for this
     // console.log('status: ' + res2.status.toString())
 }
@@ -59,18 +51,18 @@ export const GetS3FilesURLPost = async (fileNum: number): Promise<string[] | nul
     }
 }
 
-export const GetMasterpieceData = async (id: number): Promise<MasterpieceFrontendContribution | null> => {
+export const GetMasterpieceData = async (id: number): Promise<MasterpieceBackendContribution | null> => {
     // console.log('getting masterpiece data by id')
 
     const res = await axios.get(masterpieceApiURL + getMasterpieceData + '/' + id.toString())
 
     // console.log(res.status)
-    const cls = MasterpieceFrontendContribution
+    const cls = MasterpieceBackendContribution
     const contribution = plainToInstance(cls, res.data)
     // plainToInstance will return a MasterpieceFrontendContribution NOT MasterpieceFrontendContribution[] despite what the ide says
     // as a fail safe for this, return null if plainToInstance actually calls MasterpieceFrontendContribution[].
     // I'm pretty sure it is glitching because plainToInstance is an overloaded function that can also return the array version of it
-    if (contribution instanceof MasterpieceFrontendContribution) {
+    if (contribution instanceof MasterpieceBackendContribution) {
         return contribution
     } else {
         return null

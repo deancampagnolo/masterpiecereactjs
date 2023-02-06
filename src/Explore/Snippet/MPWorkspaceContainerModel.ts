@@ -1,12 +1,15 @@
 import MPSnippetModel from './MPSnippetModel'
 import AudioControllerModel, { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
+import MPModel from './MPModel'
 
 export default class MPWorkspaceContainerModel { // FIXME this name doesn't seem correct
     private readonly _audioControllerModel
     private readonly _mpSnippetModels
-    constructor (audioControllerModel: AudioControllerModel, mpSnippetModels: MPSnippetModel[]) {
+    private readonly _mpModel
+    constructor (audioControllerModel: AudioControllerModel, mpSnippetModels: MPSnippetModel[], mpModel: MPModel) {
         this._audioControllerModel = audioControllerModel
         this._mpSnippetModels = mpSnippetModels
+        this._mpModel = mpModel
     }
 
     get audioControllerModel (): AudioControllerModel {
@@ -17,7 +20,11 @@ export default class MPWorkspaceContainerModel { // FIXME this name doesn't seem
         return this._mpSnippetModels
     }
 
+    get mpModel (): MPModel {
+        return this._mpModel
+    }
+
     static BlankMPWorkspaceContainerModel (): MPWorkspaceContainerModel {
-        return new MPWorkspaceContainerModel(AudioControllerModelHelper.getInstance(), [])
+        return new MPWorkspaceContainerModel(AudioControllerModelHelper.getInstance(), [], new MPModel('default'))
     }
 }

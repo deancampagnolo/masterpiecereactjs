@@ -3,8 +3,9 @@ import * as React from 'react'
 import Typography from '@mui/material/Typography'
 import { Pause, PlayArrow, UnfoldMore } from '@mui/icons-material'
 import { Box, Collapse, IconButton } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
+import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
 
 interface MPSnippetMasterProps {
     title: string
@@ -15,16 +16,20 @@ export default function MPSnippetMaster (props: MPSnippetMasterProps): ReactJSXE
     const [isExpanded, setIsExpanded] = useState(false)
     const [isPlaying, setIsPlaying] = useState(false)
 
-    const onPlayClicked = (): void => {
-        setIsPlaying(!isPlaying)
-        props.onPlayPause()
+    const playingSet = (isTransportPlaying: boolean): void => {
+        setIsPlaying(isTransportPlaying)
     }
+
+    useEffect(() => {
+        AudioControllerModelHelper.getInstance().clearTransportStateEmitter()
+        AudioControllerModelHelper.getInstance().onTransportStateChanged(playingSet)
+    }, [])
 
     return (
         <div style={{ backgroundColor: 'lightblue', width: '100%', borderRadius: '6px', marginTop: '4px', marginBottom: '4px' }}>
             <Box display="flex" flexDirection="column">
                 <TopPortionMaster title={props.title} isExpanded={isExpanded} setIsExpanded={setIsExpanded}
-                    onClick={onPlayClicked} isPlaying={isPlaying}/>
+                    onClick={props.onPlayPause} isPlaying={isPlaying}/>
                 <CollapsablePortionMaster isExpanded={isExpanded}/>
             </Box>
         </div>

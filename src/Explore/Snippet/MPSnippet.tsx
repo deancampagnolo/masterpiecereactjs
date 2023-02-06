@@ -11,6 +11,7 @@ interface MPSnippetProps {
     onRemove: () => void
     onMute: () => void
     onSolo: () => void
+    onSnippetTitleChange: (title: string) => void
 }
 
 export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
@@ -20,7 +21,8 @@ export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
         <div style={{ backgroundColor: 'lightblue', width: '100%', borderRadius: '6px', marginTop: '4px', marginBottom: '4px' }}>
             <Box display="flex" flexDirection="column">
                 <TopPortion defaultTitle={props.title} isExpanded={isExpanded} setIsExpanded={setIsExpanded}
-                    onMute={props.onMute} onSolo={props.onSolo} onRemove={() => { props.onRemove() }}/>
+                    onMute={props.onMute} onSolo={props.onSolo} onRemove={() => { props.onRemove() }}
+                    onSnippetTitleChange={props.onSnippetTitleChange}/>
                 <CollapsablePortion isExpanded={isExpanded}/>
             </Box>
         </div>
@@ -34,14 +36,17 @@ interface TopPortionProps {
     onMute: () => void
     onSolo: () => void
     onRemove: () => void
+    onSnippetTitleChange: (title: string) => void
 }
 
 function TopPortion (props: TopPortionProps): ReactJSXElement {
     const [title, setTitle] = useState(props.defaultTitle)
     const [isMuted, setIsMuted] = useState(false)
 
-    const onTitleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-        setTitle(e.target.value)
+    const onSnippetTitleChangeEvent = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+        const title = e.target.value
+        setTitle(title)
+        props.onSnippetTitleChange(title)
     }
 
     const onMuteClicked = (): void => {
@@ -64,7 +69,7 @@ function TopPortion (props: TopPortionProps): ReactJSXElement {
             {/* </Typography> */}
 
             {/* //FIXME add editable functionality */}
-            <Input type="text" defaultValue={title} onChange={onTitleChange} disableUnderline={true} style={{ background: 'none', border: 'none', flex: 10 }}/>
+            <Input type="text" defaultValue={title} onChange={onSnippetTitleChangeEvent} disableUnderline={true} style={{ background: 'none', border: 'none', flex: 10 }}/>
             <IconButton size="small" onClick={() => props.setIsExpanded(!props.isExpanded)}>
                 <UnfoldMore/>
             </IconButton>

@@ -9,6 +9,8 @@ import { FetchMP, PostMP } from '../../RestOperations/MPRestOperations'
 import LoadIdButton from './LoadIdButton'
 import Typography from '@mui/material/Typography'
 import AudioControllerModel from '../Utils/AudioControllerModel'
+import MPTitle from './MPTitle'
+import MPModel from './MPModel'
 
 export default function MPWorkspaceContainer (): ReactJSXElement {
     console.log('MpWorkspace Load')
@@ -44,7 +46,8 @@ export default function MPWorkspaceContainer (): ReactJSXElement {
             { isLoaded
                 ? <MPWorkspace key={containerKey} onCompose={CreateBlankMasterpiece} onLoad={LoadNextMasterpiece}
                     initialAudioControllerModel={mpWorkspaceContainerModel.audioControllerModel}
-                    initialMPSnippetModels={mpWorkspaceContainerModel.mpSnippetModels}/>
+                    initialMPSnippetModels={mpWorkspaceContainerModel.mpSnippetModels}
+                    initialMPModel={mpWorkspaceContainerModel.mpModel}/>
                 : null
             }
         </div>
@@ -56,16 +59,19 @@ interface MPWorkspaceProps {
     onLoad: (songId: number) => void
     initialAudioControllerModel: AudioControllerModel
     initialMPSnippetModels: MPSnippetModel[]
+    initialMPModel: MPModel
 }
 
 function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     const audioControllerModel = useRef(props.initialAudioControllerModel)
     const [snippetControllers, setSnippetControllers] = useState(props.initialMPSnippetModels)
+    const mpModel = useRef(props.initialMPModel)
     const [bpm, setBpm] = useState(100)
 
     const addSnippetController = (selectedFile: string): void => {
         const mpSnippetModel = new MPSnippetModel(selectedFile)
-        audioControllerModel.current.addAudio(mpSnippetModel.audioLocalUUID, selectedFile, '0', '6m')
+        audioControllerModel.current.pauseMaster()
+        audioControllerModel.current.addAudio(mpSnippetModel.audioLocalUUID, selectedFile, '0')
         setSnippetControllers([...snippetControllers, mpSnippetModel])
     }
 
@@ -75,18 +81,27 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     }
 
     const onSubmit = (): void => {
-        void PostMP(audioControllerModel.current.getAllUrl())
+        void PostMP(audioControllerModel.current.getAllUrl(), snippetControllers, mpModel.current)
+    }
+
+    const onSnippetTitleChange = (id: number, title: string): void => {
+        snippetControllers.filter((value) => value.audioLocalUUID === id).forEach((value) => { value.name = title })
+    }
+    const onTitleChange = (title: string): void => {
+        mpModel.current.title = title
     }
 
     return (
         <div>
+            <MPTitle onTitleChange={onTitleChange} defaultTitle={mpModel.current.title}/>
             <Box display="flex" flexDirection="row" alignItems="center">
                 <Typography>
                     BPM:&nbsp;
                 </Typography>
                 <Input type="text" defaultValue={bpm} onChange={(e) => { setBpm(Number(e.target.value)) }}/>
             </Box>
-            <MPSnippetContainer onRemove={onRemove} onAdd={addSnippetController} audioControllerModel={audioControllerModel} snippetControllers={snippetControllers}
+            <MPSnippetContainer onRemove={onRemove} onAdd={addSnippetController} snippetControllers={snippetControllers}
+                onSnippetTitleChange={onSnippetTitleChange}
                 style={
                     { backgroundColor: 'beige', paddingTop: '4px', paddingBottom: '4px', paddingLeft: '8px', paddingRight: '8px', width: '500px' }
                 }/>
