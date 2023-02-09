@@ -2,15 +2,15 @@ import * as React from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import MPSnippetContainer from './MPSnippetContainer'
 import { useEffect, useRef, useState } from 'react'
-import { Box, Button, Input, Slider } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import MPSnippetModel from './MPSnippetModel'
 import MPWorkspaceContainerModel from './MPWorkspaceContainerModel'
 import { FetchMP, PostMP } from '../../RestOperations/MPRestOperations'
 import LoadIdButton from './LoadIdButton'
-import Typography from '@mui/material/Typography'
 import AudioControllerModel from '../Utils/AudioControllerModel'
 import MPTitle from './MPTitle'
 import MPModel from './MPModel'
+import MPMetaData from './MPMetaData'
 
 export default function MPWorkspaceContainer (): ReactJSXElement {
     console.log('MpWorkspace Load')
@@ -42,7 +42,7 @@ export default function MPWorkspaceContainer (): ReactJSXElement {
     }, []) // deps may include containerKey
 
     return (
-        <div>
+        <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
             { isLoaded
                 ? <MPWorkspace key={containerKey} onCompose={CreateBlankMasterpiece} onLoad={LoadNextMasterpiece}
                     initialAudioControllerModel={mpWorkspaceContainerModel.audioControllerModel}
@@ -92,20 +92,15 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     }
 
     return (
-        <div>
+        <div style={{ width: '30%' }}>
             <MPTitle onTitleChange={onTitleChange} defaultTitle={mpModel.current.title}/>
-            <Box display="flex" flexDirection="row" alignItems="center">
-                <Typography>
-                    BPM:&nbsp;
-                </Typography>
-                <Input type="text" defaultValue={bpm} onChange={(e) => { setBpm(Number(e.target.value)) }}/>
-            </Box>
+            <MPMetaData style={{ marginLeft: '1vw', marginRight: '1vw', marginBottom: '1vh' }} defaultBpm={bpm} onBPMChange={(newBpm) => { setBpm(newBpm) }}/>
             <MPSnippetContainer onRemove={onRemove} onAdd={addSnippetController} snippetControllers={snippetControllers}
-                onSnippetTitleChange={onSnippetTitleChange}
-                style={
-                    { backgroundColor: 'beige', paddingTop: '4px', paddingBottom: '4px', paddingLeft: '8px', paddingRight: '8px', width: '500px' }
-                }/>
-            <Slider/>
+                onSnippetTitleChange={onSnippetTitleChange}/>
+            <Box display="flex" flexDirection="row" sx={{ justifyContent: 'center' }}>
+                <Button> Submit Masterpiece</Button>
+                <Button color={'warning'}> Abandon </Button>
+            </Box>
             <Button onClick={props.onCompose}>Compose</Button>
             <LoadIdButton onLoad={props.onLoad}/>
             <Button onClick={onSubmit}>Submit</Button>

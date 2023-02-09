@@ -26,14 +26,14 @@ export default function MPAddSnippet (props: MPAddSnippetProps): ReactJSXElement
 
     return (
 
-        <div style={{ backgroundColor: 'lightblue', width: '100%', borderRadius: '6px', marginTop: '4px', marginBottom: '4px' }}>
+        <Box bgcolor="secondary.main" style={{ width: '100%', borderRadius: '6px', marginTop: '4px', marginBottom: '4px' }}>
             <Box display="flex" flexDirection="column">
-                <Box display="flex" flexDirection="row" style={{ flex: 1 }}>
+                <Box display="flex" flexDirection="row" style={{ flex: 1, alignItems: 'center' }}>
                     <IconButton size="small" component="label">
                         <input hidden type="file" onChange={onFileChange}/>
                         <Add/>
                     </IconButton>
-                    <Typography align="left" style={{ flex: 10, marginLeft: '10px', height: '100%', backgroundColor: 'brown' }}>
+                    <Typography align="left" style={{ flex: 10, marginLeft: '10px', height: '100%' }}>
                         {props.title} {selectedFile}
                     </Typography>
                     <IconButton size="small" onClick={ (selectedFile !== '') ? () => { handleSubmitOnClick(selectedFile) } : () => { } }>
@@ -41,6 +41,6 @@ export default function MPAddSnippet (props: MPAddSnippetProps): ReactJSXElement
                     </IconButton>
                 </Box>
             </Box>
-        </div>
+        </Box>
     )
 }

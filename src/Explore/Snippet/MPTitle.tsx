@@ -2,6 +2,7 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import * as React from 'react'
 import { Input } from '@mui/material'
 import { useState } from 'react'
+import { appTheme } from '../../Theme/Theme'
 
 interface MPTitleProps {
     onTitleChange: (title: string) => void
@@ -18,7 +19,9 @@ export default function MPTitle (props: MPTitleProps): ReactJSXElement {
 
     return (
         <div>
-            <Input type="text" defaultValue={title} onChange={onTitleChangeEvent}/>
+            <Input type="text" defaultValue={title} onChange={onTitleChangeEvent}
+                inputProps={{ style: { textAlign: 'center', fontSize: appTheme.typography.h1.fontSize } }}
+                style={{ marginTop: '2vh', marginBottom: '2vh' }}/>
         </div>
     )
 }

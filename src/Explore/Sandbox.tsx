@@ -6,7 +6,7 @@ import { Slider } from '@mui/material'
 import { FetchPut } from '../RestOperations/SimpleRestOperations'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function Sandbox (): ReactJSXElement {
+export default function Sandbox (): ReactJSXElement {
     const [audioControllerModel] = useState(AudioControllerModelHelper.getInstance())
     const [playerArray] = useState([] as Player[])
     const [percentTime] = useState(0)

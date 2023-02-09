@@ -8,7 +8,6 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import MPSnippetModel from './MPSnippetModel'
 
 import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
-import MPSnippetMaster from './MPSnippetMaster'
 
 interface MPSnippetContainerProps {
     style?: React.CSSProperties
@@ -23,24 +22,22 @@ export default function MPSnippetContainer (props: MPSnippetContainerProps): Rea
         AudioControllerModelHelper.getInstance().toggleMuteAudio(id)
     }
     const onSolo = (): void => {}
-    const onPlayPause = (): void => {
-        AudioControllerModelHelper.getInstance().toggleMaster()
+    const onVolumeChange = (id: number, dbs: number): void => {
+        AudioControllerModelHelper.getInstance().setVolume(id, dbs)
     }
 
     return (
-        <div>
-            <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" style={props.style}>
-                {props.snippetControllers.map((item, index) => {
-                    return (
-                        <MPSnippet key={item.audioLocalUUID} title={item.name}
-                            onRemove={() => { props.onRemove(item.audioLocalUUID) }} onMute={() => { onMute(item.audioLocalUUID) }}
-                            onSolo={onSolo} onSnippetTitleChange={(title) => { props.onSnippetTitleChange(item.audioLocalUUID, title) }}/>
-                    )
-                })}
-                <MPSnippetMaster title='Master' onPlayPause={onPlayPause}/>
-                <MPAddSnippet title="add audio file here" submitOnClick={props.onAdd }/>
-                <button onClick={AudioControllerModelHelper.getInstance().start}>start</button>
-            </Box>
-        </div>
+        <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" style={props.style}>
+            {props.snippetControllers.map((item, index) => {
+                return (
+                    <MPSnippet key={item.audioLocalUUID} title={item.name}
+                        onRemove={() => { props.onRemove(item.audioLocalUUID) }} onMute={() => { onMute(item.audioLocalUUID) }}
+                        onSolo={onSolo} onSnippetTitleChange={(title) => { props.onSnippetTitleChange(item.audioLocalUUID, title) }}
+                        onVolumeChange={(dbs) => { onVolumeChange(item.audioLocalUUID, dbs) }}/>
+                )
+            })}
+            <MPAddSnippet title="add audio file here" submitOnClick={props.onAdd }/>
+        </Box>
+
     )
 }

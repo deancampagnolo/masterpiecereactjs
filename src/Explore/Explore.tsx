@@ -6,7 +6,6 @@ import MPWorkspaceContainer from './Snippet/MPWorkspaceContainer'
 export default function Explore (): ReactJSXElement {
     return (
         <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" >
-            <h1>Welcome to Masterpiece</h1>
             {/* <Sandbox/> */}
             <MPWorkspaceContainer/>
         </Box>

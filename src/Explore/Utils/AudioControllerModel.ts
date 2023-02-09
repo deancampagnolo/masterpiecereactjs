@@ -1,9 +1,8 @@
-import { loaded, Player, start, Transport } from 'tone'
+import { Channel, loaded, Player, start, Transport } from 'tone'
 import { Time } from 'tone/build/esm/core/type/Units'
-import { Source } from 'tone/build/esm/source/Source'
 
-class SourceWrapper {
-    constructor (public source: Source<any>, public src: string) {}
+class ChannelWrapper {
+    constructor (public channel: Channel, public src: string) {}
 }
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -47,22 +46,24 @@ export default class AudioControllerModel {
         Transport.loop = true
         Transport.loopStart = '0'
         Transport.loopEnd = '12m'
-        this.audioControllerMap = new Map<number, SourceWrapper>()
+        this.audioControllerMap = new Map<number, ChannelWrapper>()
         this.transportStateEmitter = new TransportStateEmitter()
     }
 
     addAudio (audioLocalUUID: number, src: string, start?: Time, stop?: Time): void {
-        const player = new Player(src).toDestination().sync().start(start)
+        const player = new Player(src).sync().start(start)
         if (stop !== undefined) {
             player.stop(stop)
         }
-        this.audioControllerMap.set(audioLocalUUID, { source: player, src })
+        const channel = new Channel().toDestination()
+        player.connect(channel)
+        this.audioControllerMap.set(audioLocalUUID, { channel, src })
     }
 
     removeAudio (audioLocalUUID: number): boolean {
         const sourceWrapper = this.audioControllerMap.get(audioLocalUUID)
         if (sourceWrapper != null) {
-            sourceWrapper.source.dispose()
+            sourceWrapper.channel.dispose() // TODO Not 100% sure if this disposes associated source (I dont think it does)
             this.audioControllerMap.delete(audioLocalUUID)
             return true
         }
@@ -105,20 +106,31 @@ export default class AudioControllerModel {
     }
 
     toggleMuteAudio (audioLocalUUID: number): boolean {
-        const source = this.audioControllerMap.get(audioLocalUUID)?.source
-        if (source != null) {
-            source.mute = !source.mute
+        const channel = this.audioControllerMap.get(audioLocalUUID)?.channel
+        if (channel != null) {
+            channel.mute = !channel.mute
             return true
         }
         console.error('toggle Mute Audio source is undefined')
         return false
     }
 
-    start (): void {
-        void loaded().then(() => {
-            void start().then(() => {
+    setVolume (audioLocalUUID: number, dbs: number): void {
+        const channel = this.audioControllerMap.get(audioLocalUUID)?.channel
+        if (channel != null) {
+            channel.volume.value = this.sliderToDB(dbs)
+        }
+    }
+
+    sliderToDB (num: number): number {
+        return (num <= -60) ? -Infinity : num
+    }
+
+    async start (): Promise<void> {
+        await loaded().then(async () => {
+            await start().then(() => {
                 console.log('started')
-            })
+            }) // not entirely sure if this also waits for start to finish before returning promise
         })
     }
 
