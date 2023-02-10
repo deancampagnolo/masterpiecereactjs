@@ -13,7 +13,11 @@ import MPModel from './MPModel'
 import MPMetaData from './MPMetaData'
 import Typography from '@mui/material/Typography'
 
-export default function MPWorkspaceContainer (): ReactJSXElement {
+interface MPWorkspaceContainerProps {
+    id: number
+}
+
+export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps): ReactJSXElement {
     console.log('MpWorkspace Load')
     const [containerKey, setContainerKey] = useState(Math.floor(Math.random() * 10000000))// FIXME temporary
     const [isLoaded, setIsLoaded] = useState(false)
@@ -39,8 +43,8 @@ export default function MPWorkspaceContainer (): ReactJSXElement {
         // CreateBlankMasterpiece()
         // setIsLoaded(true)
         console.log('Loading Next Masterpiece')
-        LoadNextMasterpiece(1)
-    }, []) // deps may include containerKey
+        LoadNextMasterpiece(props.id)
+    }, []) // deps may include containerKey, maybe props.id
 
     return (
         <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>

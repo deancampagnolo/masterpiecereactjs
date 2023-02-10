@@ -8,7 +8,7 @@ import Homepage from './Homepage'
 export default function AppRouter (): ReactJSXElement {
     return (
         <Routes>
-            <Route path="/explore" element={
+            <Route path="/explore/:id" element={
                 <Explore/>
             } />
             <Route path="/sandbox" element={

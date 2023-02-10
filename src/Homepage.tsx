@@ -10,7 +10,7 @@ export default function Homepage (): ReactJSXElement {
             <Box display="flex" flexDirection="column" style={{ justifyContent: 'center', width: '50%' }}>
                 <Box margin={4}>
                     <Typography variant='h3' >
-                Welcome To
+                Welcome To https://stackoverflow.com/questions/53994363/react-router-link-variables-not-converted-to-values
                     </Typography >
                     <Typography variant='h2'>
                 Masterpiece Music
@@ -25,7 +25,7 @@ export default function Homepage (): ReactJSXElement {
                     </Typography>
                 </Box>
 
-                <Link to='/explore' >
+                <Link to='/explore/1' >
                     <Typography variant='h5'>
                         Try it out :)
                     </Typography>

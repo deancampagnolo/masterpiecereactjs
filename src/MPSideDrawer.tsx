@@ -1,30 +1,14 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import { Drawer, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material'
+import { Drawer, IconButton, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material'
 import React, { useState } from 'react'
-import { Casino, Create, Portrait, Search, Settings } from '@mui/icons-material'
+import { Casino, ChevronLeft, Create, Portrait, Settings } from '@mui/icons-material'
 import { sideDrawerTheme } from './Theme/Theme'
+import { Link } from 'react-router-dom'
+import SideBarSearchButton from './SideBarSearchButton'
 
-const data = [
-    { name: 'Create New', icon: <Create /> },
-    { name: 'Search', icon: <Search /> },
-    { name: 'Random', icon: <Casino /> },
-    { name: 'Profile', icon: <Portrait /> },
-    { name: 'Settings', icon: <Settings /> }
-]
 export default function MPSideDrawer (): ReactJSXElement {
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(true) // Figure out best way to hoist this up without causing rerenders, maybe global state of some sort?
 
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    const getList = () => (
-        <div style={{ marginTop: 100, marginLeft: 20, marginRight: 20, backgroundColor: 'transparent' }} onClick={() => { setOpen(false) }}>
-            {data.map((item, index) => (
-                <ListItemButton key={index}>
-                    <ListItemIcon >{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.name} />
-                </ListItemButton>
-            ))}
-        </div>
-    )
     return (
         <ThemeProvider theme={sideDrawerTheme}>
             <Drawer
@@ -35,7 +19,36 @@ export default function MPSideDrawer (): ReactJSXElement {
                 PaperProps={{ sx: { backgroundColor: 'primary.main', borderWidth: 0 } }}
                 style={{ zIndex: 1250 }}
             >
-                {getList()}
+                <div style={{ marginTop: '5vh', marginLeft: 20, marginRight: 20, backgroundColor: 'transparent', display: 'flex', flexDirection: 'column' }}>
+                    <IconButton onClick={() => { setOpen(false) }} style={{ marginLeft: 'auto' }}>
+                        <ChevronLeft/>
+                    </IconButton>
+                    <div>
+                        <Link to='/explore/1'>
+                            <ListItemButton>
+                                <ListItemIcon ><Create /></ListItemIcon>
+                                <ListItemText primary='Create New' />
+                            </ListItemButton>
+                        </Link>
+
+                        <SideBarSearchButton/>
+
+                        <ListItemButton>
+                            <ListItemIcon ><Casino /></ListItemIcon>
+                            <ListItemText primary='Random' />
+                        </ListItemButton>
+
+                        <ListItemButton>
+                            <ListItemIcon ><Portrait /></ListItemIcon>
+                            <ListItemText primary='Profile' />
+                        </ListItemButton>
+
+                        <ListItemButton>
+                            <ListItemIcon ><Settings /></ListItemIcon>
+                            <ListItemText primary='Settings' />
+                        </ListItemButton>
+                    </div>
+                </div>
             </Drawer>
         </ThemeProvider>
     )
