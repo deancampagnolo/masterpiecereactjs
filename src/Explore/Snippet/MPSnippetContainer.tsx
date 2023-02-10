@@ -13,7 +13,7 @@ interface MPSnippetContainerProps {
     style?: React.CSSProperties
     snippetControllers: MPSnippetModel[]
     onRemove: (item: number) => void
-    onAdd: (selectedFile: string) => void
+    onAdd: (selectedFiles: string[]) => void
     onSnippetTitleChange: (id: number, title: string) => void
 }
 
@@ -36,7 +36,7 @@ export default function MPSnippetContainer (props: MPSnippetContainerProps): Rea
                         onVolumeChange={(dbs) => { onVolumeChange(item.audioLocalUUID, dbs) }}/>
                 )
             })}
-            <MPAddSnippet title="add audio file here" submitOnClick={props.onAdd }/>
+            <MPAddSnippet title="add audio file(s) here" submitOnClick={props.onAdd }/>
         </Box>
 
     )

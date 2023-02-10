@@ -16,15 +16,22 @@ interface MPSnippetProps {
 }
 
 export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
+    const [isVisuallyMuted, setIsVisuallyMuted] = useState(false)
+
+    const onVolumeSliderChange = (dbs: number): void => {
+        props.onVolumeChange(dbs)
+        setIsVisuallyMuted(false)
+    }
+
     return (
         <Box bgcolor="secondary.main" style={{ width: '100%', borderRadius: '6px', marginTop: '4px', marginBottom: '4px' }}>
             <Box display="flex" flexDirection="row" alignItems="center" justifyContent="center">
-                <LeftPortion onMute={props.onMute} onSolo={props.onSolo} style={{ flex: 1 }}/>
+                <LeftPortion isVisuallyMuted={isVisuallyMuted} setIsVisuallyMuted={setIsVisuallyMuted} onMute={props.onMute} onSolo={props.onSolo} style={{ flex: 1 }}/>
                 <Divider orientation="vertical" flexItem variant="middle" sx={{ margin: '10px' }}/>
                 <Box display="flex" flexDirection="column" style={{ flex: 11 }}>
                     <TopPortion defaultTitle={props.title} onSnippetTitleChange={props.onSnippetTitleChange}/>
                     <Divider flexItem variant="middle"/>
-                    <BottomPortion onVolumeChange={props.onVolumeChange}/>
+                    <BottomPortion onVolumeSliderChange={onVolumeSliderChange}/>
                 </Box>
                 <Divider orientation="vertical" flexItem variant="middle" sx={{ margin: '10px' }}/>
                 <RightPortion onRemove={() => { props.onRemove() }} style={{ flex: 1 }}/>
@@ -36,20 +43,20 @@ export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
 interface LeftPortionProps {
     onMute: () => void
     onSolo: () => void
+    setIsVisuallyMuted: React.Dispatch<React.SetStateAction<boolean>>
+    isVisuallyMuted: boolean
     style?: React.CSSProperties
 }
 
 function LeftPortion (props: LeftPortionProps): ReactJSXElement {
-    const [isMuted, setIsMuted] = useState(false)
-
     const onMuteClicked = (): void => {
-        setIsMuted(!isMuted)
+        props.setIsVisuallyMuted(!props.isVisuallyMuted)
         props.onMute()
     }
     return (
         <Box display="flex" flexDirection="row" alignItems="center" style={props.style}>
             <IconButton size="small" onClick={onMuteClicked}>
-                {isMuted ? <VolumeOff/> : <VolumeUp/>}
+                {props.isVisuallyMuted ? <VolumeOff/> : <VolumeUp/>}
             </IconButton>
             <IconButton size="small" onClick={props.onSolo}>
                 <Mic/>
@@ -91,14 +98,14 @@ function TopPortion (props: TopPortionProps): ReactJSXElement {
 }
 
 interface BottomPortionProps {
-    onVolumeChange: (dbs: number) => void
+    onVolumeSliderChange: (dbs: number) => void
 }
 
 function BottomPortion (props: BottomPortionProps): ReactJSXElement {
     const onVolumeSliderChange = (e: Event, value: number | number[]): void => {
         console.log(value)
         if (typeof (value) === 'number') {
-            props.onVolumeChange(value)
+            props.onVolumeSliderChange(value)
         }
     }
     return (

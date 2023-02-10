@@ -68,11 +68,16 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     const mpModel = useRef(props.initialMPModel)
     const [bpm, setBpm] = useState(100)
 
-    const addSnippetController = (selectedFile: string): void => {
-        const mpSnippetModel = new MPSnippetModel(selectedFile)
+    const addSnippetController = (selectedFiles: string[]): void => {
         audioControllerModel.current.pauseMaster()
-        audioControllerModel.current.addAudio(mpSnippetModel.audioLocalUUID, selectedFile, '0')
-        setSnippetControllers([...snippetControllers, mpSnippetModel])
+        const mpSnippetModels = [] as MPSnippetModel[]
+        selectedFiles.forEach((file) => {
+            const mpSnippetModel = new MPSnippetModel(file)
+            audioControllerModel.current.addAudio(mpSnippetModel.audioLocalUUID, file, '0')
+            mpSnippetModels.push(mpSnippetModel)
+        })
+
+        setSnippetControllers([...snippetControllers, ...mpSnippetModels])
     }
 
     const onRemove = (id: number): void => {

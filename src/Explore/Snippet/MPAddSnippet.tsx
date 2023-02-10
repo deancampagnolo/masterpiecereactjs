@@ -1,27 +1,24 @@
 import * as React from 'react'
 import Typography from '@mui/material/Typography'
-import { Add, Check } from '@mui/icons-material'
+import { Add } from '@mui/icons-material'
 import { Box, IconButton } from '@mui/material'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import { useState } from 'react'
 
 interface MPAddSnippetProps {
     title: string
-    submitOnClick: (selectedFile: string) => void
+    submitOnClick: (selectedFiles: string[]) => void
 }
 
 export default function MPAddSnippet (props: MPAddSnippetProps): ReactJSXElement {
-    const [selectedFile, setSelectedFile] = useState('')
-
     const onFileChange = (event: any): void => {
         // I once got a bug where a chosen correct mp3 file errored with tone.js saying that it wasnt the correct content type
         // console.log(event.target.files[0])
-        setSelectedFile(URL.createObjectURL(event.target.files[0]))
-    }
 
-    const handleSubmitOnClick = (file: string): void => {
-        setSelectedFile('')
-        props.submitOnClick(selectedFile)
+        const fileUrls = [] as string[]
+        Array.prototype.forEach.call(event.target.files, file => {
+            fileUrls.push(URL.createObjectURL(file))
+        })
+        props.submitOnClick(fileUrls)
     }
 
     return (
@@ -30,15 +27,12 @@ export default function MPAddSnippet (props: MPAddSnippetProps): ReactJSXElement
             <Box display="flex" flexDirection="column">
                 <Box display="flex" flexDirection="row" style={{ flex: 1, alignItems: 'center' }}>
                     <IconButton size="small" component="label">
-                        <input hidden type="file" onChange={onFileChange}/>
+                        <input hidden type="file" multiple={true} onChange={onFileChange}/>
                         <Add/>
                     </IconButton>
                     <Typography align="left" style={{ flex: 10, marginLeft: '10px', height: '100%' }}>
-                        {props.title} {selectedFile}
+                        {props.title}
                     </Typography>
-                    <IconButton size="small" onClick={ (selectedFile !== '') ? () => { handleSubmitOnClick(selectedFile) } : () => { } }>
-                        <Check/>
-                    </IconButton>
                 </Box>
             </Box>
         </Box>
