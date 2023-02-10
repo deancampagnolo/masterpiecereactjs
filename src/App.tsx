@@ -7,20 +7,22 @@ import WebsiteHeader from './WebsiteHeader'
 import MPSideDrawer from './MPSideDrawer'
 import MPBottomBar from './MPBottomBar'
 import AppRouter from './AppRouter'
+import { BrowserRouter } from 'react-router-dom'
 
 function App (): ReactJSXElement {
     return (
-        <ThemeProvider theme={appTheme}>
+        <BrowserRouter>
+            <ThemeProvider theme={appTheme}>
 
-            <CssBaseline/>
-            <div className="App">
-                <WebsiteHeader/>
-                <MPSideDrawer/>
-                <AppRouter/>
-                <MPBottomBar/>
-            </div>
-
-        </ThemeProvider>
+                <CssBaseline/>
+                <div className="App">
+                    <WebsiteHeader/>
+                    <MPSideDrawer/>
+                    <AppRouter/>
+                    <MPBottomBar/>
+                </div>
+            </ThemeProvider>
+        </BrowserRouter>
     )
 }
 

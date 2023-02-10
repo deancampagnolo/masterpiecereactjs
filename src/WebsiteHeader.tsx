@@ -1,9 +1,10 @@
 import React from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { AppBar, Box, IconButton, ThemeProvider } from '@mui/material'
-import Typography from '@mui/material/Typography'
 import { websiteHeaderTheme } from './Theme/Theme'
 import { Menu } from '@mui/icons-material'
+import { Link } from 'react-router-dom'
+import Typography from '@mui/material/Typography'
 
 export default function WebsiteHeader (): ReactJSXElement {
     return (
@@ -19,9 +20,12 @@ export default function WebsiteHeader (): ReactJSXElement {
                     >
                         <Menu />
                     </IconButton>
-                    <Typography variant="h5" >
-                        MasterpieceMusic.io
-                    </Typography>
+
+                    <Link to="/" style={{ textDecoration: 'none' }}>
+                        <Typography variant="h5" color='common.white' >
+                            MasterpieceMusic.io
+                        </Typography>
+                    </Link>
                 </Box>
             </AppBar>
         </ThemeProvider>

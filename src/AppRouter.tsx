@@ -7,18 +7,17 @@ import Homepage from './Homepage'
 
 export default function AppRouter (): ReactJSXElement {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/explore" element={
-                    <Explore/>
-                } />
-                <Route path="/sandbox" element={
-                    <Sandbox/>
-                } />
-                <Route path="" element={
-                    <Homepage/>
-                } />
-            </Routes>
-        </BrowserRouter>
+        <Routes>
+            <Route path="/explore" element={
+                <Explore/>
+            } />
+            <Route path="/sandbox" element={
+                <Sandbox/>
+            } />
+            <Route path="/" element={
+                <Homepage/>
+            } />
+        </Routes>
+
     )
 }

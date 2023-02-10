@@ -11,6 +11,7 @@ import AudioControllerModel from '../Utils/AudioControllerModel'
 import MPTitle from './MPTitle'
 import MPModel from './MPModel'
 import MPMetaData from './MPMetaData'
+import Typography from '@mui/material/Typography'
 
 export default function MPWorkspaceContainer (): ReactJSXElement {
     console.log('MpWorkspace Load')
@@ -48,7 +49,9 @@ export default function MPWorkspaceContainer (): ReactJSXElement {
                     initialAudioControllerModel={mpWorkspaceContainerModel.audioControllerModel}
                     initialMPSnippetModels={mpWorkspaceContainerModel.mpSnippetModels}
                     initialMPModel={mpWorkspaceContainerModel.mpModel}/>
-                : null
+                : <Typography variant='h6'>
+                    loading...
+                </Typography>
             }
         </div>
     )
