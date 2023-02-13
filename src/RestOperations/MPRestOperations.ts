@@ -6,6 +6,7 @@ import MasterpieceBackendContribution from './MasterpieceBackendContribution'
 import { AudioControllerModelHelper } from '../Explore/Utils/AudioControllerModel'
 import MasterpieceSnippetContribution from './MasterpieceSnippetContribution'
 import MPModel from '../Explore/Snippet/MPModel'
+import MasterpieceDataContribution from './MasterpieceDataContribution'
 
 export const PostMP = async (localUrls: string[], snippetControllers: MPSnippetModel[], mpModel: MPModel): Promise<void> => {
     const convertLocalUrlsToBlob = async (urls: string[]): Promise<Blob[]> => {
@@ -21,7 +22,8 @@ export const PostMP = async (localUrls: string[], snippetControllers: MPSnippetM
         s3Urls?.forEach((value, index) => {
             snippetContributions.push(new MasterpieceSnippetContribution(value, mpSnippetModels[index].name))
         })
-        return new MasterpieceBackendContribution(99, mpModel.title, snippetContributions)
+        const dataContribution = new MasterpieceDataContribution(99, mpModel.title, mpModel.neededInstruments, mpModel.bpm, mpModel.key)
+        return new MasterpieceBackendContribution(dataContribution, snippetContributions)
     }
 
     // const localUrls = snippetData.map((value) => { return value.localSrc })
@@ -59,9 +61,14 @@ export const FetchMP = async (mpID: number): Promise<MPWorkspaceContainerModel> 
         })
     }
 
-    const mpModelTitle = (mpBackendContribution != null) ? mpBackendContribution.title : 'default'
-    if (mpModelTitle === 'default') {
-        console.error('mpBackendContribution is null')
+    const createMPModel = (backendContribution: MasterpieceBackendContribution | null): MPModel => {
+        if (backendContribution != null) {
+            const dataContribution = backendContribution.dataContribution
+            return new MPModel(dataContribution.title, dataContribution.neededInstruments, dataContribution.bpm, dataContribution.key)
+        } else {
+            return MPModel.BlankMPModel()
+        }
     }
-    return new MPWorkspaceContainerModel(audioControllerModel, mpSnippetModels, new MPModel(mpModelTitle))
+
+    return new MPWorkspaceContainerModel(audioControllerModel, mpSnippetModels, createMPModel(mpBackendContribution))
 }

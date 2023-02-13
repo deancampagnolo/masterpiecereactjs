@@ -25,6 +25,6 @@ export default class MPWorkspaceContainerModel { // FIXME this name doesn't seem
     }
 
     static BlankMPWorkspaceContainerModel (): MPWorkspaceContainerModel {
-        return new MPWorkspaceContainerModel(AudioControllerModelHelper.getInstance(), [], new MPModel('default'))
+        return new MPWorkspaceContainerModel(AudioControllerModelHelper.getInstance(), [], MPModel.BlankMPModel())
     }
 }

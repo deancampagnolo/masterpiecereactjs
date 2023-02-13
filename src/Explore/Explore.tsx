@@ -10,7 +10,7 @@ export default function Explore (): ReactJSXElement {
     return (
         <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" >
             {/* <Sandbox/> */}
-            <MPWorkspaceContainer id={Number(id)}/>
+            <MPWorkspaceContainer id={Number(id)} key={id}/>
         </Box>
     )
 }

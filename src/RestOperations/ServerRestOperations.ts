@@ -59,8 +59,8 @@ export const GetMasterpieceData = async (id: number): Promise<MasterpieceBackend
     // console.log(res.status)
     const cls = MasterpieceBackendContribution
     const contribution = plainToInstance(cls, res.data)
-    // plainToInstance will return a MasterpieceFrontendContribution NOT MasterpieceFrontendContribution[] despite what the ide says
-    // as a fail safe for this, return null if plainToInstance actually calls MasterpieceFrontendContribution[].
+    // plainToInstance will return a MasterpieceBackendContribution NOT MasterpieceBackendContribution[] despite what the ide says
+    // as a fail safe for this, return null if plainToInstance actually calls MasterpieceBackendContribution[].
     // I'm pretty sure it is glitching because plainToInstance is an overloaded function that can also return the array version of it
     if (contribution instanceof MasterpieceBackendContribution) {
         return contribution

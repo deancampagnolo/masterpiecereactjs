@@ -6,7 +6,6 @@ import { Box, Button } from '@mui/material'
 import MPSnippetModel from './MPSnippetModel'
 import MPWorkspaceContainerModel from './MPWorkspaceContainerModel'
 import { FetchMP, PostMP } from '../../RestOperations/MPRestOperations'
-import LoadIdButton from './LoadIdButton'
 import AudioControllerModel from '../Utils/AudioControllerModel'
 import MPTitle from './MPTitle'
 import MPModel from './MPModel'
@@ -19,7 +18,6 @@ interface MPWorkspaceContainerProps {
 
 export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps): ReactJSXElement {
     console.log('MpWorkspace Load')
-    const [containerKey, setContainerKey] = useState(Math.floor(Math.random() * 10000000))// FIXME temporary
     const [isLoaded, setIsLoaded] = useState(false)
 
     const [mpWorkspaceContainerModel, setMPWorkspaceContainerModel] =
@@ -27,14 +25,12 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
 
     const CreateBlankMasterpiece = (): void => {
         mpWorkspaceContainerModel.audioControllerModel.clear()
-        setContainerKey(Math.floor(Math.random() * 10000000))// FIXME temporary
         setMPWorkspaceContainerModel(MPWorkspaceContainerModel.BlankMPWorkspaceContainerModel())
     }
     const LoadNextMasterpiece = (songId: number): void => {
         setIsLoaded(false)
         mpWorkspaceContainerModel.audioControllerModel.clear()
         FetchMP(songId).then((newModel) => {
-            setContainerKey(Math.floor(Math.random() * 10000000))// FIXME temporary
             setMPWorkspaceContainerModel(newModel)
             setIsLoaded(true)
         }).catch(e => { console.error(e) })
@@ -43,13 +39,17 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
         // CreateBlankMasterpiece()
         // setIsLoaded(true)
         console.log('Loading Next Masterpiece')
-        LoadNextMasterpiece(props.id)
+        if (props.id === -1) {
+            CreateBlankMasterpiece()
+        } else {
+            LoadNextMasterpiece(props.id)
+        }
     }, []) // deps may include containerKey, maybe props.id
 
     return (
         <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
             { isLoaded
-                ? <MPWorkspace key={containerKey} onCompose={CreateBlankMasterpiece} onLoad={LoadNextMasterpiece}
+                ? <MPWorkspace onCompose={CreateBlankMasterpiece}
                     initialAudioControllerModel={mpWorkspaceContainerModel.audioControllerModel}
                     initialMPSnippetModels={mpWorkspaceContainerModel.mpSnippetModels}
                     initialMPModel={mpWorkspaceContainerModel.mpModel}/>
@@ -63,7 +63,6 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
 
 interface MPWorkspaceProps {
     onCompose: () => void
-    onLoad: (songId: number) => void
     initialAudioControllerModel: AudioControllerModel
     initialMPSnippetModels: MPSnippetModel[]
     initialMPModel: MPModel
@@ -73,7 +72,6 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     const audioControllerModel = useRef(props.initialAudioControllerModel)
     const [snippetControllers, setSnippetControllers] = useState(props.initialMPSnippetModels)
     const mpModel = useRef(props.initialMPModel)
-    const [bpm, setBpm] = useState(100)
 
     const addSnippetController = (selectedFiles: string[]): void => {
         audioControllerModel.current.pauseMaster()
@@ -102,11 +100,22 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     const onTitleChange = (title: string): void => {
         mpModel.current.title = title
     }
+    const onBPMChange = (newBpm: number): void => {
+        mpModel.current.bpm = newBpm
+    }
+    const onKeyChange = (newKey: string): void => {
+        mpModel.current.key = newKey
+    }
+    const onNeedsChange = (newNeeds: string[]): void => {
+        mpModel.current.neededInstruments = newNeeds
+    }
 
     return (
         <div style={{ width: '30%' }}>
             <MPTitle onTitleChange={onTitleChange} defaultTitle={mpModel.current.title}/>
-            <MPMetaData style={{ marginLeft: '1vw', marginRight: '1vw', marginBottom: '1vh' }} defaultBpm={bpm} onBPMChange={(newBpm) => { setBpm(newBpm) }}/>
+            <MPMetaData style={{ marginLeft: '1vw', marginRight: '1vw', marginBottom: '1vh' }}
+                defaultBpm={mpModel.current.bpm} onBPMChange={onBPMChange} defaultKey={mpModel.current.key} onKeyChange={onKeyChange}
+                defaultNeeds={mpModel.current.neededInstruments} onNeedsChange={onNeedsChange}/>
             <MPSnippetContainer onRemove={onRemove} onAdd={addSnippetController} snippetControllers={snippetControllers}
                 onSnippetTitleChange={onSnippetTitleChange}/>
             <Box display="flex" flexDirection="row" sx={{ justifyContent: 'center' }}>
@@ -114,7 +123,6 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
                 <Button color={'warning'}> Abandon </Button>
             </Box>
             <Button onClick={props.onCompose}>Compose</Button>
-            <LoadIdButton onLoad={props.onLoad}/>
             <Button onClick={onSubmit}>Submit</Button>
         </div>
     )

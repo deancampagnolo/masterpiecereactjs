@@ -1,5 +1,6 @@
 import MasterpieceSnippetContribution from './MasterpieceSnippetContribution'
+import MasterpieceDataContribution from './MasterpieceDataContribution'
 
 export default class MasterpieceBackendContribution {
-    constructor (public songId: number, public title: string, public snippetContributions: MasterpieceSnippetContribution[]) {}
+    constructor (public dataContribution: MasterpieceDataContribution, public snippetContributions: MasterpieceSnippetContribution[]) {}
 }
