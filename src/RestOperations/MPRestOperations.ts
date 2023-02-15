@@ -20,7 +20,7 @@ export const PostMP = async (localUrls: string[], snippetControllers: MPSnippetM
     const createMasterpieceBackendContribution = (s3Urls: string[], mpSnippetModels: MPSnippetModel[], mpModel: MPModel): MasterpieceBackendContribution => {
         const snippetContributions = [] as MasterpieceSnippetContribution[]
         s3Urls?.forEach((value, index) => {
-            snippetContributions.push(new MasterpieceSnippetContribution(value, mpSnippetModels[index].name))
+            snippetContributions.push(new MasterpieceSnippetContribution(value, mpSnippetModels[index].name, mpSnippetModels[index].volume))
         })
         const dataContribution = new MasterpieceDataContribution(99, mpModel.title, mpModel.neededInstruments, mpModel.bpm, mpModel.key)
         return new MasterpieceBackendContribution(dataContribution, snippetContributions)
@@ -43,6 +43,7 @@ export const FetchMP = async (mpID: number): Promise<MPWorkspaceContainerModel> 
     const mpBackendContribution = await GetMasterpieceData(mpID)
     const pathsToAudio = mpBackendContribution?.snippetContributions.map((value) => value.src)
     const titles = mpBackendContribution?.snippetContributions.map((value) => value.snippetTitle)
+    const volumes = mpBackendContribution?.snippetContributions.map((value) => Number(value.volume))
     const urls = [] as string[]
     if (pathsToAudio != null) {
         const files = await GetS3FileBlobURLs(pathsToAudio)
@@ -53,9 +54,9 @@ export const FetchMP = async (mpID: number): Promise<MPWorkspaceContainerModel> 
         }
     }
     audioControllerModel.removeAllAudio()
-    if (urls != null && titles != null) { // FIXME urls I dont think should ever be null, this is probably a consequence of random mp not being completed yet
+    if (urls != null && titles != null && volumes != null) { // FIXME urls I dont think should ever be null, this is probably a consequence of random mp not being completed yet
         urls.forEach((url: string, index) => {
-            const mpSnippetModel = new MPSnippetModel(titles[index])
+            const mpSnippetModel = new MPSnippetModel(titles[index], volumes[index])
             mpSnippetModels.push(mpSnippetModel)
             audioControllerModel.addAudio(mpSnippetModel.audioLocalUUID, url, '0')
         })

@@ -5,6 +5,7 @@ import { Pause, PlayArrow } from '@mui/icons-material'
 import { bottomBarTheme } from '../Theme/Theme'
 import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
 import VolumeSlider from '../VolumeSlider'
+import ProgressSlider from '../ProgressSlider'
 
 const playPauseIconStyle = {
     width: 50,
@@ -36,21 +37,24 @@ export default function MPBottomBar (): ReactJSXElement {
     return (
         <ThemeProvider theme={bottomBarTheme}>
             <AppBar position="fixed" sx={{ top: 'auto', bottom: 0, zIndex: 1251, paddingTop: 2, paddingBottom: 2 }}>
-                <Box bgcolor="primary.main" display="flex" flexDirection="row" justifyContent="center" alignItems="center">
-                    <div>
-                        <IconButton size="small" onClick={onPlayClicked} sx={{
-                            borderRadius: '50%',
-                            border: 2,
-                            borderColor: 'warning.main'
-                        }}>
-                            {isPlaying ? <Pause sx={playPauseIconStyle}/> : <PlayArrow sx={playPauseIconStyle}/>}
-                        </IconButton>
-                    </div>
-                    <Typography style={{ marginLeft: '1vw' }}>
+                <Box flexDirection="column" bgcolor="primary.main">
+                    <Box display="flex" flexDirection="row" justifyContent="center" alignItems="center">
+                        <div>
+                            <IconButton size="small" onClick={onPlayClicked} sx={{
+                                borderRadius: '50%',
+                                border: 2,
+                                borderColor: 'warning.main'
+                            }}>
+                                {isPlaying ? <Pause sx={playPauseIconStyle}/> : <PlayArrow sx={playPauseIconStyle}/>}
+                            </IconButton>
+                        </div>
+                        <Typography style={{ marginLeft: '1vw' }}>
                        Master Volume
-                    </Typography>
-                    <VolumeSlider onVolumeSliderChange={onVolumeSliderChange} style={{ color: 'warning.main', marginLeft: '20px', marginRight: '20px', width: '5%' }}/>
-
+                        </Typography>
+                        <VolumeSlider onVolumeSliderChange={onVolumeSliderChange} defaultValue={0}
+                            style={{ color: 'warning.main', marginLeft: '20px', marginRight: '20px', width: '5%' }}/>
+                    </Box>
+                    <ProgressSlider style={{ color: 'warning.main', width: '15%' }}/>
                 </Box>
             </AppBar>
         </ThemeProvider>

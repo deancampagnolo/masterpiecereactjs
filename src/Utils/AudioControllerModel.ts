@@ -16,6 +16,29 @@ export class AudioControllerModelHelper {
     }
 }
 
+class TransportProgressEmitter {
+    listeners = [] as Array<(progress: number) => void>
+    constructor (transport: typeof Transport) {
+        setInterval(() => {
+            this.listeners.forEach(
+                (callback) => {
+                    callback(transport.progress)
+                }
+            )
+            // there might seem like a memory leak from here, but I think its garbage collected eventually
+            // https://stackoverflow.com/questions/14034107/does-javascript-setinterval-method-cause-memory-leak
+        }, 16)
+    }
+
+    on (callback: (progress: number) => void): void {
+        this.listeners.push(callback)
+    }
+
+    reset (): void {
+        this.listeners = []
+    }
+}
+
 class TransportStateEmitter {
     listeners = [] as Array<(arg0: boolean) => void>
     emit (isPlaying: boolean): void {
@@ -40,15 +63,17 @@ class TransportStateEmitter {
 export default class AudioControllerModel {
     private readonly audioControllerMap
     private readonly transportStateEmitter
+    private readonly transportProgressEmitter
     private readonly masterChannel
 
-    constructor () {
+    constructor () { // this maybe should be protected
         Transport.bpm.value = 100
         Transport.loop = true
         Transport.loopStart = '0'
         Transport.loopEnd = '12m'
         this.audioControllerMap = new Map<number, ChannelWrapper>()
         this.transportStateEmitter = new TransportStateEmitter()
+        this.transportProgressEmitter = new TransportProgressEmitter(Transport)
         this.masterChannel = new Channel().toDestination()
     }
 
@@ -95,6 +120,10 @@ export default class AudioControllerModel {
         this.emitTransportStateChanged(false)
     }
 
+    onTransportProgressUpdated (callback: (progress: number) => void): void {
+        this.transportProgressEmitter.on(callback)
+    }
+
     onTransportStateChanged (callback: (arg0: boolean) => void): void {
         this.transportStateEmitter.on(callback)
     }
@@ -129,7 +158,15 @@ export default class AudioControllerModel {
     }
 
     sliderToDB (num: number): number {
-        return (num <= -60) ? -Infinity : num
+        return (num <= -59) ? -Infinity : num
+    }
+
+    startAtPercent (percent: number): void {
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+        const seconds = Math.round(Number(Transport.loopEnd.valueOf().toString()) * percent * 10) / 10
+        // console.log(seconds)
+        Transport.stop()
+        Transport.start('+.1', '+' + seconds.toString()) // FIXME there is a race condition here with stop() thats why there is .1s delay on it
     }
 
     async start (): Promise<void> {

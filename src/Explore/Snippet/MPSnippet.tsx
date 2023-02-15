@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import Typography from '@mui/material/Typography'
 import { Remove, VolumeUp, VolumeOff, Mic } from '@mui/icons-material'
-import { Box, Divider, IconButton, Input, Slider } from '@mui/material'
+import { Box, Divider, IconButton, Input } from '@mui/material'
 import { useState } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import VolumeSlider from '../../VolumeSlider'
@@ -14,6 +14,7 @@ interface MPSnippetProps {
     onSolo: () => void
     onVolumeChange: (dbs: number) => void
     onSnippetTitleChange: (title: string) => void
+    initialVolume: number
 }
 
 export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
@@ -32,7 +33,7 @@ export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
                 <Box display="flex" flexDirection="column" style={{ flex: 11 }}>
                     <TopPortion defaultTitle={props.title} onSnippetTitleChange={props.onSnippetTitleChange}/>
                     <Divider flexItem variant="middle"/>
-                    <BottomPortion onVolumeSliderChange={onVolumeSliderChange}/>
+                    <BottomPortion onVolumeSliderChange={onVolumeSliderChange} initialVolume={props.initialVolume}/>
                 </Box>
                 <Divider orientation="vertical" flexItem variant="middle" sx={{ margin: '10px' }}/>
                 <RightPortion onRemove={() => { props.onRemove() }} style={{ flex: 1 }}/>
@@ -100,6 +101,7 @@ function TopPortion (props: TopPortionProps): ReactJSXElement {
 
 interface BottomPortionProps {
     onVolumeSliderChange: (dbs: number) => void
+    initialVolume: number
 }
 
 function BottomPortion (props: BottomPortionProps): ReactJSXElement {
@@ -114,7 +116,8 @@ function BottomPortion (props: BottomPortionProps): ReactJSXElement {
             <Typography>
                 Volume
             </Typography>
-            <VolumeSlider onVolumeSliderChange={onVolumeSliderChange} style={{ marginLeft: '20px', marginRight: '20px', width: '30%' }}/>
+            <VolumeSlider onVolumeSliderChange={onVolumeSliderChange} defaultValue={props.initialVolume}
+                style={{ marginLeft: '20px', marginRight: '20px', width: '30%' }}/>
         </Box>
     )
 }
