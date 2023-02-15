@@ -6,7 +6,11 @@ import { Menu } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
 
-export default function WebsiteHeader (): ReactJSXElement {
+interface WebsiteHeaderProps {
+    onButtonClicked: () => void
+}
+
+export default function WebsiteHeader (props: WebsiteHeaderProps): ReactJSXElement {
     return (
         <ThemeProvider theme={websiteHeaderTheme}>
             <AppBar position="sticky" elevation={0} style={{ zIndex: 1251 }}>
@@ -17,6 +21,7 @@ export default function WebsiteHeader (): ReactJSXElement {
                         color="inherit"
                         aria-label="menu"
                         sx={{ ml: 1, mr: 2 }}
+                        onClick={props.onButtonClicked}
                     >
                         <Menu />
                     </IconButton>

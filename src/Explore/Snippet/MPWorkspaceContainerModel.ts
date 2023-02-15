@@ -1,5 +1,5 @@
 import MPSnippetModel from './MPSnippetModel'
-import AudioControllerModel, { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
+import AudioControllerModel, { AudioControllerModelHelper } from '../../Utils/AudioControllerModel'
 import MPModel from './MPModel'
 
 export default class MPWorkspaceContainerModel { // FIXME this name doesn't seem correct

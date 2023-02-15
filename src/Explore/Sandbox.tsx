@@ -1,6 +1,6 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import React, { useState } from 'react'
-import { AudioControllerModelHelper } from './Utils/AudioControllerModel'
+import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
 import { loaded, Player, start, Transport } from 'tone'
 import { Slider } from '@mui/material'
 import { FetchPut } from '../RestOperations/SimpleRestOperations'

@@ -10,10 +10,10 @@ export default function Homepage (): ReactJSXElement {
             <Box display="flex" flexDirection="column" style={{ justifyContent: 'center', width: '50%' }}>
                 <Box margin={4}>
                     <Typography variant='h3' >
-                Welcome To https://stackoverflow.com/questions/53994363/react-router-link-variables-not-converted-to-values
+                        Welcome To
                     </Typography >
                     <Typography variant='h2'>
-                Masterpiece Music
+                        Masterpiece Music
                     </Typography>
                 </Box>
                 <Box marginTop={10} marginBottom={2}>

@@ -1,55 +1,60 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import { Drawer, IconButton, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material'
-import React, { useState } from 'react'
+import { Box, Drawer, IconButton, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material'
+import React from 'react'
 import { Casino, ChevronLeft, Create, Portrait, Settings } from '@mui/icons-material'
 import { sideDrawerTheme } from './Theme/Theme'
 import { Link } from 'react-router-dom'
 import SideBarSearchButton from './SideBarSearchButton'
+import { drawerWidth } from './Theme/Styles'
 
-export default function MPSideDrawer (): ReactJSXElement {
-    const [open, setOpen] = useState(true) // Figure out best way to hoist this up without causing rerenders, maybe global state of some sort?
+interface MPSideDrawerProps {
+    isOpen: boolean
+    setIsOpen: (isOpen: boolean) => void
+}
 
+export default function MPSideDrawer (props: MPSideDrawerProps): ReactJSXElement {
     return (
         <ThemeProvider theme={sideDrawerTheme}>
-            <Drawer
-                variant="persistent"
-                open={open}
-                anchor={'left'}
-                onClose={() => { setOpen(false) }}
-                PaperProps={{ sx: { backgroundColor: 'primary.main', borderWidth: 0 } }}
-                style={{ zIndex: 1250 }}
-            >
-                <div style={{ marginTop: '5vh', marginLeft: 20, marginRight: 20, backgroundColor: 'transparent', display: 'flex', flexDirection: 'column' }}>
-                    <IconButton onClick={() => { setOpen(false) }} style={{ marginLeft: 'auto' }}>
-                        <ChevronLeft/>
-                    </IconButton>
-                    <div>
-                        <Link to='/explore/1'>
+            <Box display="flex">
+                <Drawer
+                    variant="persistent"
+                    open={props.isOpen}
+                    anchor={'left'}
+                    PaperProps={{ sx: { backgroundColor: 'primary.main', borderWidth: 0, width: drawerWidth } }}
+                    style={{ zIndex: 1250, width: drawerWidth }}
+                >
+                    <div style={{ marginTop: '5vh', marginLeft: 20, marginRight: 20, backgroundColor: 'transparent', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                        <IconButton onClick={() => { props.setIsOpen(false) }} style={{ marginLeft: 'auto' }}>
+                            <ChevronLeft/>
+                        </IconButton>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <Link to='/explore/-1' >
+                                <ListItemButton>
+                                    <ListItemIcon ><Create /></ListItemIcon>
+                                    <ListItemText primary='Create New' />
+                                </ListItemButton>
+                            </Link>
+
+                            <SideBarSearchButton/>
+
                             <ListItemButton>
-                                <ListItemIcon ><Create /></ListItemIcon>
-                                <ListItemText primary='Create New' />
+                                <ListItemIcon ><Casino /></ListItemIcon>
+                                <ListItemText primary='Random' />
                             </ListItemButton>
-                        </Link>
 
-                        <SideBarSearchButton/>
+                            <ListItemButton>
+                                <ListItemIcon ><Portrait /></ListItemIcon>
+                                <ListItemText primary='Profile' />
+                            </ListItemButton>
 
-                        <ListItemButton>
-                            <ListItemIcon ><Casino /></ListItemIcon>
-                            <ListItemText primary='Random' />
-                        </ListItemButton>
-
-                        <ListItemButton>
-                            <ListItemIcon ><Portrait /></ListItemIcon>
-                            <ListItemText primary='Profile' />
-                        </ListItemButton>
-
-                        <ListItemButton>
-                            <ListItemIcon ><Settings /></ListItemIcon>
-                            <ListItemText primary='Settings' />
-                        </ListItemButton>
+                            <ListItemButton>
+                                <ListItemIcon ><Settings /></ListItemIcon>
+                                <ListItemText primary='Settings' />
+                            </ListItemButton>
+                        </div>
                     </div>
-                </div>
-            </Drawer>
+                </Drawer>
+            </Box>
         </ThemeProvider>
     )
 }

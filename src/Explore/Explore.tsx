@@ -8,7 +8,7 @@ export default function Explore (): ReactJSXElement {
     const { id } = useParams()
     console.log(id)
     return (
-        <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" >
+        <Box display="flex" justifyContent="center" alignItems="center" flexDirection="column" width="100%" >
             {/* <Sandbox/> */}
             <MPWorkspaceContainer id={Number(id)} key={id}/>
         </Box>

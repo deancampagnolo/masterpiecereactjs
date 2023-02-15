@@ -7,7 +7,7 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 
 import MPSnippetModel from './MPSnippetModel'
 
-import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
+import { AudioControllerModelHelper } from '../../Utils/AudioControllerModel'
 
 interface MPSnippetContainerProps {
     style?: React.CSSProperties

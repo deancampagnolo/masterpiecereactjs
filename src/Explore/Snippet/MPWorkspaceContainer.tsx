@@ -6,7 +6,7 @@ import { Box, Button } from '@mui/material'
 import MPSnippetModel from './MPSnippetModel'
 import MPWorkspaceContainerModel from './MPWorkspaceContainerModel'
 import { FetchMP, PostMP } from '../../RestOperations/MPRestOperations'
-import AudioControllerModel from '../Utils/AudioControllerModel'
+import AudioControllerModel from '../../Utils/AudioControllerModel'
 import MPTitle from './MPTitle'
 import MPModel from './MPModel'
 import MPMetaData from './MPMetaData'
@@ -26,6 +26,7 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
     const CreateBlankMasterpiece = (): void => {
         mpWorkspaceContainerModel.audioControllerModel.clear()
         setMPWorkspaceContainerModel(MPWorkspaceContainerModel.BlankMPWorkspaceContainerModel())
+        setIsLoaded(true)
     }
     const LoadNextMasterpiece = (songId: number): void => {
         setIsLoaded(false)
@@ -49,7 +50,7 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
     return (
         <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
             { isLoaded
-                ? <MPWorkspace onCompose={CreateBlankMasterpiece}
+                ? <MPWorkspace
                     initialAudioControllerModel={mpWorkspaceContainerModel.audioControllerModel}
                     initialMPSnippetModels={mpWorkspaceContainerModel.mpSnippetModels}
                     initialMPModel={mpWorkspaceContainerModel.mpModel}/>
@@ -62,7 +63,6 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
 }
 
 interface MPWorkspaceProps {
-    onCompose: () => void
     initialAudioControllerModel: AudioControllerModel
     initialMPSnippetModels: MPSnippetModel[]
     initialMPModel: MPModel
@@ -119,11 +119,9 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
             <MPSnippetContainer onRemove={onRemove} onAdd={addSnippetController} snippetControllers={snippetControllers}
                 onSnippetTitleChange={onSnippetTitleChange}/>
             <Box display="flex" flexDirection="row" sx={{ justifyContent: 'center' }}>
-                <Button> Submit Masterpiece</Button>
+                <Button onClick={onSubmit}> Submit Masterpiece</Button>
                 <Button color={'warning'}> Abandon </Button>
             </Box>
-            <Button onClick={props.onCompose}>Compose</Button>
-            <Button onClick={onSubmit}>Submit</Button>
         </div>
     )
 }

@@ -1,24 +1,29 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './App.css'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import { CssBaseline, ThemeProvider } from '@mui/material'
+import { Box, CssBaseline, ThemeProvider } from '@mui/material'
 import { appTheme } from './Theme/Theme'
 import WebsiteHeader from './WebsiteHeader'
 import MPSideDrawer from './MPSideDrawer'
-import MPBottomBar from './MPBottomBar'
+import MPBottomBar from './BottomBar/MPBottomBar'
 import AppRouter from './AppRouter'
 import { BrowserRouter } from 'react-router-dom'
+import { MPMain } from './MPMain'
 
 function App (): ReactJSXElement {
+    const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(true)
     return (
         <BrowserRouter>
             <ThemeProvider theme={appTheme}>
-
                 <CssBaseline/>
                 <div className="App">
-                    <WebsiteHeader/>
-                    <MPSideDrawer/>
-                    <AppRouter/>
+                    <WebsiteHeader onButtonClicked={() => { setIsSideDrawerOpen(!isSideDrawerOpen) }}/>
+                    <MPSideDrawer isOpen={isSideDrawerOpen} setIsOpen={setIsSideDrawerOpen}/>
+                    <MPMain open={isSideDrawerOpen}>
+                        <Box display="flex">
+                            <AppRouter/>
+                        </Box>
+                    </MPMain>
                     <MPBottomBar/>
                 </div>
             </ThemeProvider>
