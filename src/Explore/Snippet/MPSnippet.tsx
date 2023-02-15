@@ -5,6 +5,7 @@ import { Remove, VolumeUp, VolumeOff, Mic } from '@mui/icons-material'
 import { Box, Divider, IconButton, Input, Slider } from '@mui/material'
 import { useState } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
+import VolumeSlider from '../../VolumeSlider'
 
 interface MPSnippetProps {
     title: string
@@ -113,7 +114,7 @@ function BottomPortion (props: BottomPortionProps): ReactJSXElement {
             <Typography>
                 Volume
             </Typography>
-            <Slider onChange={onVolumeSliderChange} min={-60} max={0} sx = {{ marginLeft: '20px', marginRight: '20px', width: '30%' }}/>
+            <VolumeSlider onVolumeSliderChange={onVolumeSliderChange} style={{ marginLeft: '20px', marginRight: '20px', width: '30%' }}/>
         </Box>
     )
 }

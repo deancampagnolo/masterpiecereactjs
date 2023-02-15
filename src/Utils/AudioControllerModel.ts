@@ -40,6 +40,7 @@ class TransportStateEmitter {
 export default class AudioControllerModel {
     private readonly audioControllerMap
     private readonly transportStateEmitter
+    private readonly masterChannel
 
     constructor () {
         Transport.bpm.value = 100
@@ -48,6 +49,7 @@ export default class AudioControllerModel {
         Transport.loopEnd = '12m'
         this.audioControllerMap = new Map<number, ChannelWrapper>()
         this.transportStateEmitter = new TransportStateEmitter()
+        this.masterChannel = new Channel().toDestination()
     }
 
     addAudio (audioLocalUUID: number, src: string, start?: Time, stop?: Time): void {
@@ -55,8 +57,9 @@ export default class AudioControllerModel {
         if (stop !== undefined) {
             player.stop(stop)
         }
-        const channel = new Channel().toDestination()
+        const channel = new Channel()
         player.connect(channel)
+        channel.connect(this.masterChannel)
         this.audioControllerMap.set(audioLocalUUID, { channel, src })
     }
 
@@ -72,7 +75,6 @@ export default class AudioControllerModel {
     }
 
     removeAllAudio (): void {
-        console.log('here')
         for (const [key] of this.audioControllerMap.entries()) {
             this.removeAudio(key)
         }
@@ -120,6 +122,10 @@ export default class AudioControllerModel {
         if (channel != null) {
             channel.volume.value = this.sliderToDB(dbs)
         }
+    }
+
+    setMasterVolume (dbs: number): void {
+        this.masterChannel.volume.value = dbs
     }
 
     sliderToDB (num: number): number {

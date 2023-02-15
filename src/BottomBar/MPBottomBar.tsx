@@ -1,9 +1,10 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import { AppBar, Box, IconButton, ThemeProvider } from '@mui/material'
+import { AppBar, Box, IconButton, ThemeProvider, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { Pause, PlayArrow } from '@mui/icons-material'
 import { bottomBarTheme } from '../Theme/Theme'
 import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
+import VolumeSlider from '../VolumeSlider'
 
 const playPauseIconStyle = {
     width: 50,
@@ -26,11 +27,11 @@ export default function MPBottomBar (): ReactJSXElement {
             () => { AudioControllerModelHelper.getInstance().toggleMaster() }).catch(() => { console.error('On Play Failed') })
     }
 
-    // const onVolumeSliderChange = (e: Event, value: number | number[]): void => {
-    //     if (typeof (value) === 'number') {
-    //         AudioControllerModelHelper.getInstance().setMasterVolume(value)
-    //     }
-    // }
+    const onVolumeSliderChange = (e: Event, value: number | number[]): void => {
+        if (typeof (value) === 'number') {
+            AudioControllerModelHelper.getInstance().setMasterVolume(value)
+        }
+    }
 
     return (
         <ThemeProvider theme={bottomBarTheme}>
@@ -45,10 +46,10 @@ export default function MPBottomBar (): ReactJSXElement {
                             {isPlaying ? <Pause sx={playPauseIconStyle}/> : <PlayArrow sx={playPauseIconStyle}/>}
                         </IconButton>
                     </div>
-                    {/* <Typography style={{ marginLeft: '1vw' }}> */}
-                    {/*    Master Volume */}
-                    {/* </Typography> */}
-                    {/* <VolumeSlider onVolumeSliderChange={onVolumeSliderChange} style={{ color: 'warning.main', marginLeft: '20px', marginRight: '20px', width: '5%' }}/> */}
+                    <Typography style={{ marginLeft: '1vw' }}>
+                       Master Volume
+                    </Typography>
+                    <VolumeSlider onVolumeSliderChange={onVolumeSliderChange} style={{ color: 'warning.main', marginLeft: '20px', marginRight: '20px', width: '5%' }}/>
 
                 </Box>
             </AppBar>
