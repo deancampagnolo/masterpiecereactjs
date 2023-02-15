@@ -17,6 +17,7 @@ interface MPWorkspaceContainerProps {
 }
 
 export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps): ReactJSXElement {
+    const [workspaceKey, setWorkspaceKey] = useState(Date.now())
     console.log('MpWorkspace Load')
     const [isLoaded, setIsLoaded] = useState(false)
 
@@ -34,6 +35,7 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
         FetchMP(songId).then((newModel) => {
             setMPWorkspaceContainerModel(newModel)
             setIsLoaded(true)
+            setWorkspaceKey(Date.now())
         }).catch(e => { console.error(e) })
     }
     useEffect(() => {
@@ -51,6 +53,7 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
         <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
             { isLoaded
                 ? <MPWorkspace
+                    key={workspaceKey}
                     initialAudioControllerModel={mpWorkspaceContainerModel.audioControllerModel}
                     initialMPSnippetModels={mpWorkspaceContainerModel.mpSnippetModels}
                     initialMPModel={mpWorkspaceContainerModel.mpModel}/>
