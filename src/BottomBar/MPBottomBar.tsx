@@ -6,6 +6,7 @@ import { bottomBarTheme } from '../Theme/Theme'
 import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
 import VolumeSlider from '../VolumeSlider'
 import ProgressSlider from '../ProgressSlider'
+import { bottomBarZIndex } from '../Theme/Styles'
 
 const playPauseIconStyle = {
     width: 50,
@@ -24,8 +25,7 @@ export default function MPBottomBar (): ReactJSXElement {
     }, [])
 
     const onPlayClicked = (): void => {
-        AudioControllerModelHelper.getInstance().start().then(
-            () => { AudioControllerModelHelper.getInstance().toggleMaster() }).catch(() => { console.error('On Play Failed') })
+        AudioControllerModelHelper.getInstance().toggleMaster(true)
     }
 
     const onVolumeSliderChange = (e: Event, value: number | number[]): void => {
@@ -36,7 +36,7 @@ export default function MPBottomBar (): ReactJSXElement {
 
     return (
         <ThemeProvider theme={bottomBarTheme}>
-            <AppBar position="fixed" sx={{ top: 'auto', bottom: 0, zIndex: 1251, paddingTop: 2, paddingBottom: 2 }}>
+            <AppBar position="fixed" sx={{ top: 'auto', bottom: 0, zIndex: bottomBarZIndex, paddingTop: 2, paddingBottom: 2 }}>
                 <Box flexDirection="column" bgcolor="primary.main">
                     <Box display="flex" flexDirection="row" justifyContent="center" alignItems="center">
                         <div>

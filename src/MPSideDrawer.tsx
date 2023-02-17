@@ -5,7 +5,7 @@ import { Casino, ChevronLeft, Create, Portrait, Settings } from '@mui/icons-mate
 import { sideDrawerTheme } from './Theme/Theme'
 import { Link } from 'react-router-dom'
 import SideBarSearchButton from './SideBarSearchButton'
-import { drawerWidth } from './Theme/Styles'
+import { drawerWidth, sideDrawerZIndex } from './Theme/Styles'
 
 interface MPSideDrawerProps {
     isOpen: boolean
@@ -21,7 +21,7 @@ export default function MPSideDrawer (props: MPSideDrawerProps): ReactJSXElement
                     open={props.isOpen}
                     anchor={'left'}
                     PaperProps={{ sx: { backgroundColor: 'primary.main', borderWidth: 0, width: drawerWidth } }}
-                    style={{ zIndex: 1250, width: drawerWidth }}
+                    style={{ zIndex: sideDrawerZIndex, width: drawerWidth }}
                 >
                     <div style={{ marginTop: '5vh', marginLeft: 20, marginRight: 20, backgroundColor: 'transparent', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                         <IconButton onClick={() => { props.setIsOpen(false) }} style={{ marginLeft: 'auto' }}>

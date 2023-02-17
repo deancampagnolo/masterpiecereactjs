@@ -5,6 +5,7 @@ import { websiteHeaderTheme } from './Theme/Theme'
 import { Menu } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
+import { websiteHeaderZIndex } from './Theme/Styles'
 
 interface WebsiteHeaderProps {
     onButtonClicked: () => void
@@ -13,7 +14,7 @@ interface WebsiteHeaderProps {
 export default function WebsiteHeader (props: WebsiteHeaderProps): ReactJSXElement {
     return (
         <ThemeProvider theme={websiteHeaderTheme}>
-            <AppBar position="sticky" elevation={0} style={{ zIndex: 1251 }}>
+            <AppBar position="sticky" elevation={0} style={{ zIndex: websiteHeaderZIndex }}>
                 <Box bgcolor="primary.main" display="flex" flexDirection="row">
                     <IconButton
                         size="small"

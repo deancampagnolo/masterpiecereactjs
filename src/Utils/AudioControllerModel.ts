@@ -1,8 +1,9 @@
-import { Channel, loaded, Player, start, Transport } from 'tone'
-import { Time } from 'tone/build/esm/core/type/Units'
+import { Channel, loaded, Player, Recorder, start, Transport } from 'tone'
+import { Time, TransportTime } from 'tone/build/esm/core/type/Units'
+import fileDownload from 'js-file-download'
 
 class ChannelWrapper {
-    constructor (public channel: Channel, public src: string) {}
+    constructor (public channel: Channel, public src: string, public recorder?: Recorder) {}
 }
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -105,19 +106,34 @@ export default class AudioControllerModel {
         }
     }
 
-    toggleMaster (): void {
+    toggleMaster (shouldHaveStartDelay?: boolean): void {
+        // note: be careful start() to here and other pause/start/etc. as some events are time based off of these
         if (Transport.state === 'started') {
-            Transport.pause()
-            this.emitTransportStateChanged(false)
+            this.pauseMaster()
         } else {
-            Transport.start()
-            this.emitTransportStateChanged(true)
+            this.startMaster(undefined, undefined, shouldHaveStartDelay)
         }
     }
 
     pauseMaster (): void {
         Transport.pause()
         this.emitTransportStateChanged(false)
+    }
+
+    startMaster (time?: Time, offset?: TransportTime, shouldHaveStartDelay?: boolean): void {
+        // note: be careful start() to here and other pause/start/etc. as some events are time based off of these
+        const startIt = (): void => {
+            Transport.start(time, offset)
+            this.emitTransportStateChanged(true)
+        }
+
+        if (shouldHaveStartDelay === true) {
+            this.start().then(() => {
+                startIt()
+            }).catch(() => { console.error('start didnt work') })
+        } else {
+            startIt()
+        }
     }
 
     onTransportProgressUpdated (callback: (progress: number) => void): void {
@@ -166,7 +182,40 @@ export default class AudioControllerModel {
         const seconds = Math.round(Number(Transport.loopEnd.valueOf().toString()) * percent * 10) / 10
         // console.log(seconds)
         Transport.stop()
-        Transport.start('+.1', '+' + seconds.toString()) // FIXME there is a race condition here with stop() thats why there is .1s delay on it
+        this.startMaster('+.1', '+' + seconds.toString(), true) // FIXME there is a race condition here with stop() thats why there is .1s delay on it
+    }
+
+    async startRecord (): Promise<Promise<any>> {
+        this.startMaster('+1', '0', true)
+
+        Transport.once('start', () => {
+            Transport.scheduleOnce(() => {
+                this.pauseMaster()
+                Promise.all(
+                    Array.from(this.audioControllerMap).map(async ([key, value]) => {
+                        value.recorder = new Recorder()
+                        value.channel.connect(value.recorder)
+                        return await value.recorder.start()
+                    })).then(() => { this.startMaster() }).catch(() => {}) // There may be race condition shenanigans here
+            }, '0')
+        })
+
+        await new Promise((resolve, reject) => {
+            Transport.once('loopEnd', () => {
+                this.stopRecord().then(() => { resolve('foo') })
+                    // eslint-disable-next-line prefer-promise-reject-errors
+                    .catch(() => { reject('stop record didnt work') })
+            })
+        })
+    }
+
+    async stopRecord (): Promise<void> {
+        await Promise.all(
+            Array.from(this.audioControllerMap).map(async ([key, value]) => {
+                if (value.recorder != null) {
+                    await value.recorder.stop().then((res) => { fileDownload(res, key.toString()) })
+                }
+            }))
     }
 
     async start (): Promise<void> {

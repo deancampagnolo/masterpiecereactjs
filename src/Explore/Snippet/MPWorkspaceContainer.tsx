@@ -6,11 +6,12 @@ import { Box, Button } from '@mui/material'
 import MPSnippetModel from './MPSnippetModel'
 import MPWorkspaceContainerModel from './MPWorkspaceContainerModel'
 import { FetchMP, PostMP } from '../../RestOperations/MPRestOperations'
-import AudioControllerModel from '../../Utils/AudioControllerModel'
+import AudioControllerModel, { AudioControllerModelHelper } from '../../Utils/AudioControllerModel'
 import MPTitle from './MPTitle'
 import MPModel from './MPModel'
 import MPMetaData from './MPMetaData'
 import Typography from '@mui/material/Typography'
+import RecordingBackdrop from '../../RecordingBackdrop'
 
 interface MPWorkspaceContainerProps {
     id: number
@@ -75,7 +76,7 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     const audioControllerModel = useRef(props.initialAudioControllerModel)
     const [snippetControllers, setSnippetControllers] = useState(props.initialMPSnippetModels)
     const mpModel = useRef(props.initialMPModel)
-
+    const [isRecording, setIsRecording] = useState(false)
     const addSnippetController = (selectedFiles: string[]): void => {
         audioControllerModel.current.pauseMaster()
         const mpSnippetModels = [] as MPSnippetModel[]
@@ -112,6 +113,10 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     const onNeedsChange = (newNeeds: string[]): void => {
         mpModel.current.neededInstruments = newNeeds
     }
+    const downloadStems = (): void => {
+        setIsRecording(true)
+        AudioControllerModelHelper.getInstance().startRecord().finally(() => { setIsRecording(false) })
+    }
 
     return (
         <div style={{ width: '30%' }}>
@@ -124,6 +129,10 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
             <Box display="flex" flexDirection="row" sx={{ justifyContent: 'center' }}>
                 <Button onClick={onSubmit}> Submit Masterpiece</Button>
                 <Button color={'warning'}> Abandon </Button>
+                <Button onClick={downloadStems}> Download Stems </Button>
+                {isRecording
+                    ? <RecordingBackdrop isRecording={isRecording}/>
+                    : null}
             </Box>
         </div>
     )
