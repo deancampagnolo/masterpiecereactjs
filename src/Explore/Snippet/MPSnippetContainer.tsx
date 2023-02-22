@@ -7,8 +7,9 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 
 import MPSnippetModel from './MPSnippetModel'
 
-import { AudioControllerModelHelper } from '../../Utils/AudioControllerModel'
+import { AudioControllerModelHelper, NudgeType } from '../../Utils/AudioControllerModel'
 import { useEffect } from 'react'
+import { TimeObject } from 'tone/build/esm/core/type/Units'
 
 interface MPSnippetContainerProps {
     style?: React.CSSProperties
@@ -30,8 +31,25 @@ export default function MPSnippetContainer (props: MPSnippetContainerProps): Rea
         AudioControllerModelHelper.getInstance().setVolume(id, dbs)
     }
 
+    const onNudge = (id: number, nudge: NudgeType, snippetController?: MPSnippetModel): void => {
+        const nudgeAmountObject = AudioControllerModelHelper.getInstance().nudgeAudio(id, nudge)
+        console.log('nudge Amount Object')
+        console.log(nudgeAmountObject)
+        if (snippetController != null && nudgeAmountObject != null) {
+            snippetController.nudgeAmountObject = nudgeAmountObject
+        }
+        console.log(snippetController)
+    }
+
+    const setNudge = (id: number, nudge: TimeObject): void => {
+        AudioControllerModelHelper.getInstance().setNudgeObject(id, nudge)
+    }
+
     useEffect(() => {
-        props.snippetControllers.forEach((value) => { onVolumeChange(value.audioLocalUUID, value.volume) })
+        props.snippetControllers.forEach((value) => {
+            onVolumeChange(value.audioLocalUUID, value.volume)
+            setNudge(value.audioLocalUUID, value.nudgeAmountObject)
+        })
     }, [])
 
     return (
@@ -41,7 +59,8 @@ export default function MPSnippetContainer (props: MPSnippetContainerProps): Rea
                     <MPSnippet key={item.audioLocalUUID} title={item.name}
                         onRemove={() => { props.onRemove(item.audioLocalUUID) }} onMute={() => { onMute(item.audioLocalUUID) }}
                         onSolo={onSolo} onSnippetTitleChange={(title) => { props.onSnippetTitleChange(item.audioLocalUUID, title) }}
-                        onVolumeChange={(dbs) => { onVolumeChange(item.audioLocalUUID, dbs, item) }} initialVolume={item.volume}/>
+                        onVolumeChange={(dbs) => { onVolumeChange(item.audioLocalUUID, dbs, item) }} initialVolume={item.volume}
+                        onNudge={(nudge) => { onNudge(item.audioLocalUUID, nudge, item) }}/>
                 )
             })}
             <MPAddSnippet title="add audio file(s) here" submitOnClick={props.onAdd }/>

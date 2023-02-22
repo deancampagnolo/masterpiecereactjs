@@ -51,7 +51,7 @@ export default function Sandbox (): ReactJSXElement {
         // const player = new Player(require('../9to5.mp3')).toDestination().sync().start(0).stop('6m')
         // playerArray.push(player)
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        audioControllerModel.addAudio(132, require('../9to5.mp3'), 0, '6m')
+        audioControllerModel.addAudio(132, require('../9to5.mp3'))
     }
 
     const DisposeAllPlayers = (): void => {

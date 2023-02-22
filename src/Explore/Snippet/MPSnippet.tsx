@@ -1,11 +1,18 @@
 import * as React from 'react'
+import { useState } from 'react'
 
 import Typography from '@mui/material/Typography'
-import { Remove, VolumeUp, VolumeOff, Mic } from '@mui/icons-material'
+import {
+    Mic,
+    Remove,
+    VolumeOff,
+    VolumeUp
+} from '@mui/icons-material'
 import { Box, Divider, IconButton, Input } from '@mui/material'
-import { useState } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import VolumeSlider from '../../VolumeSlider'
+import { NudgeType } from '../../Utils/AudioControllerModel'
+import NudgeBox from '../../NudgeBox'
 
 interface MPSnippetProps {
     title: string
@@ -15,6 +22,7 @@ interface MPSnippetProps {
     onVolumeChange: (dbs: number) => void
     onSnippetTitleChange: (title: string) => void
     initialVolume: number
+    onNudge: (nudge: NudgeType) => void
 }
 
 export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
@@ -33,7 +41,7 @@ export default function MPSnippet (props: MPSnippetProps): ReactJSXElement {
                 <Box display="flex" flexDirection="column" style={{ flex: 11 }}>
                     <TopPortion defaultTitle={props.title} onSnippetTitleChange={props.onSnippetTitleChange}/>
                     <Divider flexItem variant="middle"/>
-                    <BottomPortion onVolumeSliderChange={onVolumeSliderChange} initialVolume={props.initialVolume}/>
+                    <BottomPortion onVolumeSliderChange={onVolumeSliderChange} initialVolume={props.initialVolume} onNudge={props.onNudge}/>
                 </Box>
                 <Divider orientation="vertical" flexItem variant="middle" sx={{ margin: '10px' }}/>
                 <RightPortion onRemove={() => { props.onRemove() }} style={{ flex: 1 }}/>
@@ -102,6 +110,7 @@ function TopPortion (props: TopPortionProps): ReactJSXElement {
 interface BottomPortionProps {
     onVolumeSliderChange: (dbs: number) => void
     initialVolume: number
+    onNudge: (nudge: NudgeType) => void
 }
 
 function BottomPortion (props: BottomPortionProps): ReactJSXElement {
@@ -118,6 +127,8 @@ function BottomPortion (props: BottomPortionProps): ReactJSXElement {
             </Typography>
             <VolumeSlider onVolumeSliderChange={onVolumeSliderChange} defaultValue={props.initialVolume}
                 style={{ marginLeft: '20px', marginRight: '20px', width: '30%' }}/>
+            <Divider orientation="vertical" flexItem variant="middle" sx={{ margin: '10px' }}/>
+            <NudgeBox onNudge={props.onNudge}/>
         </Box>
     )
 }

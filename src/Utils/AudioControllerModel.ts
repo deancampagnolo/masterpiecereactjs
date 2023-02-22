@@ -1,9 +1,69 @@
-import { Channel, loaded, Player, Recorder, start, Transport } from 'tone'
-import { Time, TransportTime } from 'tone/build/esm/core/type/Units'
+import { Channel, loaded, Player, Recorder, start, Time, Transport } from 'tone'
+import { Subdivision, Time as TimeUnit, TimeObject, TransportTime } from 'tone/build/esm/core/type/Units'
 import fileDownload from 'js-file-download'
 
+export class TimeMap {
+    private readonly timeMap
+    constructor (map?: Map<Subdivision, number>, nudgeObject?: TimeObject) {
+        if (map != null) {
+            this.timeMap = map
+        } else if (nudgeObject != null) {
+            this.timeMap = this.nudgeObjectToMap(nudgeObject)
+        } else {
+            this.timeMap = new Map<Subdivision, number>()
+        }
+    }
+
+    private nudgeObjectToMap (nudgeObject: TimeObject): Map<Subdivision, number> {
+        const newMap = new Map<Subdivision, number>()
+        Object.entries(nudgeObject).forEach((value, index, array) => {
+            // @ts-expect-error
+            newMap.set(value[0], value[1])
+        })
+        return newMap
+    }
+
+    add (sub: Subdivision, num: number): void {
+        if (this.timeMap.has(sub)) {
+            const prevNum = this.timeMap.get(sub)
+            if (prevNum != null) {
+                this.timeMap.set(sub, prevNum + num)
+            }
+        } else {
+            this.timeMap.set(sub, num)
+        }
+    }
+
+    private invert (): void {
+        this.timeMap.forEach((value, key, map) => {
+            map.set(key, value * -1)
+        })
+    }
+
+    createNewInvertedMap (): TimeMap {
+        const newTimeMap = new TimeMap(new Map(this.timeMap))
+        newTimeMap.invert()
+        return newTimeMap
+    }
+
+    toSeconds (): number {
+        return Time(this.getObject()).toSeconds()
+    }
+
+    getObject (): TimeObject {
+        return Object.fromEntries(this.timeMap)
+    }
+}
+
 class ChannelWrapper {
-    constructor (public channel: Channel, public src: string, public recorder?: Recorder) {}
+    constructor (public channel: Channel, public player: Player, public src: string, public timeMap: TimeMap, public recorder?: Recorder) {}
+}
+
+export enum NudgeType {
+    VeryLeft,
+    Left,
+    VeryRight,
+    Right
 }
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
@@ -78,15 +138,15 @@ export default class AudioControllerModel {
         this.masterChannel = new Channel().toDestination()
     }
 
-    addAudio (audioLocalUUID: number, src: string, start?: Time, stop?: Time): void {
-        const player = new Player(src).sync().start(start)
-        if (stop !== undefined) {
-            player.stop(stop)
+    addAudio (audioLocalUUID: number, src: string, timeMap?: TimeMap): void {
+        if (timeMap == null) {
+            timeMap = new TimeMap()
         }
+        const player = new Player(src).sync().start(timeMap.getObject())
         const channel = new Channel()
         player.connect(channel)
         channel.connect(this.masterChannel)
-        this.audioControllerMap.set(audioLocalUUID, { channel, src })
+        this.audioControllerMap.set(audioLocalUUID, { channel, player, src, timeMap })
     }
 
     removeAudio (audioLocalUUID: number): boolean {
@@ -120,7 +180,7 @@ export default class AudioControllerModel {
         this.emitTransportStateChanged(false)
     }
 
-    startMaster (time?: Time, offset?: TransportTime, shouldHaveStartDelay?: boolean): void {
+    startMaster (time?: TimeUnit, offset?: TransportTime, shouldHaveStartDelay?: boolean): void {
         // note: be careful start() to here and other pause/start/etc. as some events are time based off of these
         const startIt = (): void => {
             Transport.start(time, offset)
@@ -160,6 +220,49 @@ export default class AudioControllerModel {
         }
         console.error('toggle Mute Audio source is undefined')
         return false
+    }
+
+    setNudgeObject (audioLocalUUID: number, nudgeObject: TimeObject): void {
+        const channelWrapper = this.audioControllerMap.get(audioLocalUUID)
+        if (channelWrapper != null) {
+            channelWrapper.timeMap = new TimeMap(undefined, nudgeObject)
+        }
+    }
+
+    nudgeAudio (audioLocalUUID: number, nudge: NudgeType): TimeObject | null {
+        const channelWrapper = this.audioControllerMap.get(audioLocalUUID)
+        if (channelWrapper != null) {
+            const player = channelWrapper.player
+            const timeMap = channelWrapper.timeMap
+
+            switch (nudge) {
+                case NudgeType.Left: {
+                    timeMap.add('64n', -1)
+                    break
+                }
+                case NudgeType.VeryLeft: {
+                    timeMap.add('16n', -1)
+                    break
+                }
+                case NudgeType.Right: {
+                    timeMap.add('64n', 1)
+                    break
+                }
+                case NudgeType.VeryRight: {
+                    timeMap.add('16n', 1)
+                    break
+                }
+            }
+            if (timeMap.toSeconds() < 0) {
+                player.unsync().sync().start(0, timeMap.createNewInvertedMap().getObject())
+            } else {
+                player.unsync().sync().start(timeMap.getObject())
+            }
+            return timeMap.getObject()
+        } else {
+            console.error('player is null')
+            return null
+        }
     }
 
     setVolume (audioLocalUUID: number, dbs: number): void {

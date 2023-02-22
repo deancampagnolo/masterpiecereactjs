@@ -82,7 +82,7 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
         const mpSnippetModels = [] as MPSnippetModel[]
         selectedFiles.forEach((file) => {
             const mpSnippetModel = new MPSnippetModel(file)
-            audioControllerModel.current.addAudio(mpSnippetModel.audioLocalUUID, file, '0')
+            audioControllerModel.current.addAudio(mpSnippetModel.audioLocalUUID, file)
             mpSnippetModels.push(mpSnippetModel)
         })
 
@@ -119,7 +119,7 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     }
 
     return (
-        <div style={{ width: '30%' }}>
+        <div style={{ width: '35%' }}>
             <MPTitle onTitleChange={onTitleChange} defaultTitle={mpModel.current.title}/>
             <MPMetaData style={{ marginLeft: '1vw', marginRight: '1vw', marginBottom: '1vh' }}
                 defaultBpm={mpModel.current.bpm} onBPMChange={onBPMChange} defaultKey={mpModel.current.key} onKeyChange={onKeyChange}
