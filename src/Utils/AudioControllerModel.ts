@@ -59,6 +59,10 @@ class ChannelWrapper {
     constructor (public channel: Channel, public player: Player, public src: string, public timeMap: TimeMap, public recorder?: Recorder) {}
 }
 
+class MasterWrapper {
+    constructor (public channel: Channel, public recorder?: Recorder) {}
+}
+
 export enum NudgeType {
     VeryLeft,
     Left,
@@ -135,7 +139,7 @@ export default class AudioControllerModel {
         this.audioControllerMap = new Map<number, ChannelWrapper>()
         this.transportStateEmitter = new TransportStateEmitter()
         this.transportProgressEmitter = new TransportProgressEmitter(Transport)
-        this.masterChannel = new Channel().toDestination()
+        this.masterChannel = new MasterWrapper(new Channel().toDestination())
     }
 
     addAudio (audioLocalUUID: number, src: string, timeMap?: TimeMap): void {
@@ -145,7 +149,7 @@ export default class AudioControllerModel {
         const player = new Player(src).sync().start(timeMap.getObject())
         const channel = new Channel()
         player.connect(channel)
-        channel.connect(this.masterChannel)
+        channel.connect(this.masterChannel.channel)
         this.audioControllerMap.set(audioLocalUUID, { channel, player, src, timeMap })
     }
 
@@ -278,7 +282,7 @@ export default class AudioControllerModel {
     }
 
     setMasterVolume (dbs: number): void {
-        this.masterChannel.volume.value = dbs
+        this.masterChannel.channel.volume.value = dbs
     }
 
     sliderToDB (num: number): number {
@@ -293,18 +297,44 @@ export default class AudioControllerModel {
         this.startMaster('+.1', '+' + seconds.toString(), true) // FIXME there is a race condition here with stop() thats why there is .1s delay on it
     }
 
+    private createRecorders (): Array<Promise<unknown>> {
+        // This can be confusing - promise array needs await because it is in an async function, when adding the
+        // master recorder this isn't the case bc it isn't a function and start() returns a promise.
+        // TODO there may need to be clean up for the channel connecting, maybe i need to dispose afterwards?
+        const promiseArray = Array.from(this.audioControllerMap).map(async ([, value]) => {
+            value.recorder = new Recorder()
+            value.channel.connect(value.recorder)
+            return await value.recorder.start()
+        })
+        this.masterChannel.recorder = new Recorder()
+        this.masterChannel.channel.connect(this.masterChannel.recorder)
+        promiseArray.push(this.masterChannel.recorder.start())
+
+        return promiseArray
+    }
+
+    private stopRecordersAndDownload (): Array<Promise<unknown>> {
+        // same note as create recorders
+        const promiseArray = Array.from(this.audioControllerMap).map(async ([key, value]) => {
+            if (value.recorder != null) {
+                await value.recorder.stop().then((res) => { fileDownload(res, key.toString()) })
+            }
+        })
+        if (this.masterChannel.recorder != null) {
+            promiseArray.push(this.masterChannel.recorder.stop().then((res) => {
+                fileDownload(res, 'master')
+            }))
+        }
+        return promiseArray
+    }
+
     async startRecord (): Promise<Promise<any>> {
         this.startMaster('+1', '0', true)
 
         Transport.once('start', () => {
             Transport.scheduleOnce(() => {
                 this.pauseMaster()
-                Promise.all(
-                    Array.from(this.audioControllerMap).map(async ([key, value]) => {
-                        value.recorder = new Recorder()
-                        value.channel.connect(value.recorder)
-                        return await value.recorder.start()
-                    })).then(() => { this.startMaster() }).catch(() => {}) // There may be race condition shenanigans here
+                Promise.all(this.createRecorders()).then(() => { this.startMaster() }).catch(() => {}) // There may be race condition shenanigans here
             }, '0')
         })
 
@@ -319,11 +349,8 @@ export default class AudioControllerModel {
 
     async stopRecord (): Promise<void> {
         await Promise.all(
-            Array.from(this.audioControllerMap).map(async ([key, value]) => {
-                if (value.recorder != null) {
-                    await value.recorder.stop().then((res) => { fileDownload(res, key.toString()) })
-                }
-            }))
+            this.stopRecordersAndDownload()
+        )
     }
 
     async start (): Promise<void> {
