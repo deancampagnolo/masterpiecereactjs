@@ -226,6 +226,7 @@ export default class AudioControllerModel {
         const channelWrapper = this.audioControllerMap.get(audioLocalUUID)
         if (channelWrapper != null) {
             channelWrapper.timeMap = new TimeMap(undefined, nudgeObject)
+            this.syncNudge(channelWrapper.player, channelWrapper.timeMap)
         }
     }
 
@@ -253,15 +254,19 @@ export default class AudioControllerModel {
                     break
                 }
             }
-            if (timeMap.toSeconds() < 0) {
-                player.unsync().sync().start(0, timeMap.createNewInvertedMap().getObject())
-            } else {
-                player.unsync().sync().start(timeMap.getObject())
-            }
+            this.syncNudge(player, timeMap)
             return timeMap.getObject()
         } else {
             console.error('player is null')
             return null
+        }
+    }
+
+    private syncNudge (player: Player, timeMap: TimeMap): void {
+        if (timeMap.toSeconds() < 0) {
+            player.unsync().sync().start(0, timeMap.createNewInvertedMap().getObject())
+        } else {
+            player.unsync().sync().start(timeMap.getObject())
         }
     }
 
