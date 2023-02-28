@@ -17,6 +17,7 @@ interface MPSnippetContainerProps {
     onRemove: (item: number) => void
     onAdd: (selectedFiles: string[]) => void
     onSnippetTitleChange: (id: number, title: string) => void
+    isPreview: boolean
 }
 
 export default function MPSnippetContainer (props: MPSnippetContainerProps): ReactJSXElement {
@@ -50,7 +51,7 @@ export default function MPSnippetContainer (props: MPSnippetContainerProps): Rea
             onVolumeChange(value.audioLocalUUID, value.volume)
             setNudge(value.audioLocalUUID, value.nudgeAmountObject)
         })
-    }, [])
+    }, [props.isPreview])
 
     return (
         <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" style={props.style}>

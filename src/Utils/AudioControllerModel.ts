@@ -1,62 +1,16 @@
-import { Channel, loaded, Player, Recorder, start, Time, Transport } from 'tone'
-import { Subdivision, Time as TimeUnit, TimeObject, TransportTime } from 'tone/build/esm/core/type/Units'
-import fileDownload from 'js-file-download'
-
-export class TimeMap {
-    private readonly timeMap
-    constructor (map?: Map<Subdivision, number>, nudgeObject?: TimeObject) {
-        if (map != null) {
-            this.timeMap = map
-        } else if (nudgeObject != null) {
-            this.timeMap = this.nudgeObjectToMap(nudgeObject)
-        } else {
-            this.timeMap = new Map<Subdivision, number>()
-        }
-    }
-
-    private nudgeObjectToMap (nudgeObject: TimeObject): Map<Subdivision, number> {
-        const newMap = new Map<Subdivision, number>()
-        Object.entries(nudgeObject).forEach((value, index, array) => {
-            // @ts-expect-error
-            newMap.set(value[0], value[1])
-        })
-        return newMap
-    }
-
-    add (sub: Subdivision, num: number): void {
-        if (this.timeMap.has(sub)) {
-            const prevNum = this.timeMap.get(sub)
-            if (prevNum != null) {
-                this.timeMap.set(sub, prevNum + num)
-            }
-        } else {
-            this.timeMap.set(sub, num)
-        }
-    }
-
-    private invert (): void {
-        this.timeMap.forEach((value, key, map) => {
-            map.set(key, value * -1)
-        })
-    }
-
-    createNewInvertedMap (): TimeMap {
-        const newTimeMap = new TimeMap(new Map(this.timeMap))
-        newTimeMap.invert()
-        return newTimeMap
-    }
-
-    toSeconds (): number {
-        return Time(this.getObject()).toSeconds()
-    }
-
-    getObject (): TimeObject {
-        return Object.fromEntries(this.timeMap)
-    }
-}
+import { Channel, loaded, Player, Recorder, start, Transport } from 'tone'
+import { Time as TimeUnit, TimeObject, TransportTime } from 'tone/build/esm/core/type/Units'
+import TimeMap from './TimeMap'
+import TransportStateEmitter from './TransportStateEmitter'
+import { KeyedBlob } from './KeyedBlob'
 
 class ChannelWrapper {
-    constructor (public channel: Channel, public player: Player, public src: string, public timeMap: TimeMap, public recorder?: Recorder) {}
+    constructor (
+        public channel: Channel,
+        public player: Player,
+        public src: string,
+        public timeMap: TimeMap,
+        public recorder?: Recorder) {}
 }
 
 class MasterWrapper {
@@ -104,27 +58,6 @@ class TransportProgressEmitter {
     }
 }
 
-class TransportStateEmitter {
-    listeners = [] as Array<(arg0: boolean) => void>
-    emit (isPlaying: boolean): void {
-        this.listeners
-            .forEach(
-                (callback) => {
-                    // eslint-disable-next-line n/no-callback-literal
-                    callback(isPlaying)
-                }
-            )
-    }
-
-    on (callback: (arg0: boolean) => void): void {
-        this.listeners.push(callback)
-    }
-
-    reset (): void {
-        this.listeners = []
-    }
-}
-
 export default class AudioControllerModel {
     private readonly audioControllerMap
     private readonly transportStateEmitter
@@ -135,7 +68,7 @@ export default class AudioControllerModel {
         Transport.bpm.value = 100
         Transport.loop = true
         Transport.loopStart = '0'
-        Transport.loopEnd = '12m'
+        Transport.loopEnd = '4m'
         this.audioControllerMap = new Map<number, ChannelWrapper>()
         this.transportStateEmitter = new TransportStateEmitter()
         this.transportProgressEmitter = new TransportProgressEmitter(Transport)
@@ -297,15 +230,21 @@ export default class AudioControllerModel {
         this.startMaster('+.1', '+' + seconds.toString(), true) // FIXME there is a race condition here with stop() thats why there is .1s delay on it
     }
 
-    private createRecorders (): Array<Promise<unknown>> {
+    private createRecorders (isOnlyMaster: boolean): Array<Promise<unknown>> {
         // This can be confusing - promise array needs await because it is in an async function, when adding the
         // master recorder this isn't the case bc it isn't a function and start() returns a promise.
         // TODO there may need to be clean up for the channel connecting, maybe i need to dispose afterwards?
-        const promiseArray = Array.from(this.audioControllerMap).map(async ([, value]) => {
-            value.recorder = new Recorder()
-            value.channel.connect(value.recorder)
-            return await value.recorder.start()
-        })
+        let promiseArray: Array<Promise<unknown>> = []
+        if (!isOnlyMaster) {
+            promiseArray = promiseArray.concat(
+                Array.from(this.audioControllerMap).map(async ([key, value]) => {
+                    value.recorder = new Recorder()
+                    value.channel.connect(value.recorder)
+                    return await value.recorder.start()
+                })
+            )
+        }
+
         this.masterChannel.recorder = new Recorder()
         this.masterChannel.channel.connect(this.masterChannel.recorder)
         promiseArray.push(this.masterChannel.recorder.start())
@@ -313,43 +252,57 @@ export default class AudioControllerModel {
         return promiseArray
     }
 
-    private stopRecordersAndDownload (): Array<Promise<unknown>> {
+    private stopRecordersAndDownload (isOnlyMaster: boolean): Array<Promise<KeyedBlob>> {
         // same note as create recorders
-        const promiseArray = Array.from(this.audioControllerMap).map(async ([key, value]) => {
-            if (value.recorder != null) {
-                await value.recorder.stop().then((res) => { fileDownload(res, key.toString()) })
-            }
-        })
+        let promiseArray: Array<Promise<KeyedBlob>> = []
+        const createKeyedBlob = async (key: number, blob: Promise<Blob>): Promise<KeyedBlob> => {
+            return new KeyedBlob(key, await blob)
+        }
+        if (!isOnlyMaster) {
+            promiseArray = promiseArray.concat(
+                Array.from(this.audioControllerMap).map(async ([key, value]): Promise<KeyedBlob | null> => {
+                    if (value.recorder != null) {
+                        return await createKeyedBlob(key, value.recorder.stop())
+                    } else {
+                        return null
+                    }
+                }).filter((item): item is Promise<KeyedBlob> => {
+                    return item != null
+                }))
+        }
+
         if (this.masterChannel.recorder != null) {
-            promiseArray.push(this.masterChannel.recorder.stop().then((res) => {
-                fileDownload(res, 'master')
-            }))
+            promiseArray.push(createKeyedBlob(0, this.masterChannel.recorder.stop()))
         }
         return promiseArray
     }
 
-    async startRecord (): Promise<Promise<any>> {
+    async startDownloadRecord (isOnlyMaster: boolean): Promise<KeyedBlob[]> {
         this.startMaster('+1', '0', true)
 
         Transport.once('start', () => {
             Transport.scheduleOnce(() => {
                 this.pauseMaster()
-                Promise.all(this.createRecorders()).then(() => { this.startMaster() }).catch(() => {}) // There may be race condition shenanigans here
+                Promise.all(this.createRecorders(isOnlyMaster)).then(() => { this.startMaster() }).catch(() => {}) // There may be race condition shenanigans here
             }, '0')
         })
-
+        const downloadArray: KeyedBlob[] = []
         await new Promise((resolve, reject) => {
             Transport.once('loopEnd', () => {
-                this.stopRecord().then(() => { resolve('foo') })
+                this.stopDownloadRecord(isOnlyMaster).then((res) => {
+                    downloadArray.push(...res)
+                    resolve('loop successfully ended')
+                })
                     // eslint-disable-next-line prefer-promise-reject-errors
                     .catch(() => { reject('stop record didnt work') })
             })
         })
+        return downloadArray
     }
 
-    async stopRecord (): Promise<void> {
-        await Promise.all(
-            this.stopRecordersAndDownload()
+    private async stopDownloadRecord (isOnlyMaster: boolean): Promise<KeyedBlob[]> {
+        return await Promise.all(
+            this.stopRecordersAndDownload(isOnlyMaster)
         )
     }
 

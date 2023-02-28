@@ -20,6 +20,7 @@ export const PostMPContribution = async (mpContribution: MasterpieceBackendContr
 }
 
 export const GetS3FilesURLGet = async (filenames: string[]): Promise<string[] | null> => {
+    // NOTE ORDER DOES MATTER FOR FILENAMES/ returning the string array, must make changes to make it not sequential
     // console.log('S3: getting s3 link for get')
 
     let filesInUrlListForm = ''

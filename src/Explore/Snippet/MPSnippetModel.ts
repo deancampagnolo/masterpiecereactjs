@@ -1,6 +1,10 @@
 import { TimeObject } from 'tone/build/esm/core/type/Units'
 
 export default class MPSnippetModel {
+    get s3FileUrl (): string | null {
+        return this._s3FileUrl
+    }
+
     get audioLocalUUID (): number {
         return this._audioLocalUUID
     }
@@ -31,11 +35,13 @@ export default class MPSnippetModel {
 
     private readonly _audioLocalUUID
     private _name
+    private readonly _s3FileUrl
     private _volume
     private _nudgeAmountObject
 
-    constructor (name: string, volume?: number, nudgeAmountObject?: TimeObject) {
+    constructor (name: string, s3FileUrl: string | null, volume?: number, nudgeAmountObject?: TimeObject) {
         this._name = name
+        this._s3FileUrl = s3FileUrl
         if (volume != null) {
             this._volume = volume
         } else {

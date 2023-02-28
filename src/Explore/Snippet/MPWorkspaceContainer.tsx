@@ -5,13 +5,15 @@ import { useEffect, useRef, useState } from 'react'
 import { Box, Button } from '@mui/material'
 import MPSnippetModel from './MPSnippetModel'
 import MPWorkspaceContainerModel from './MPWorkspaceContainerModel'
-import { FetchMP, PostMP } from '../../RestOperations/MPRestOperations'
+import { FetchAndConnectMPAudio, FetchPreviewMP, PostMP } from '../../RestOperations/MPRestOperations'
 import AudioControllerModel, { AudioControllerModelHelper } from '../../Utils/AudioControllerModel'
 import MPTitle from './MPTitle'
 import MPModel from './MPModel'
 import MPMetaData from './MPMetaData'
 import Typography from '@mui/material/Typography'
 import RecordingBackdrop from '../../RecordingBackdrop'
+import Preview from '../../Preview'
+import { createZipFromKeyedBlob } from '../../Utils/ZipHelper'
 
 interface MPWorkspaceContainerProps {
     id: number
@@ -33,7 +35,7 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
     const LoadNextMasterpiece = (songId: number): void => {
         setIsLoaded(false)
         mpWorkspaceContainerModel.audioControllerModel.clear()
-        FetchMP(songId).then((newModel) => {
+        FetchPreviewMP(songId).then((newModel) => {
             setMPWorkspaceContainerModel(newModel)
             setIsLoaded(true)
             setWorkspaceKey(Date.now())
@@ -77,11 +79,12 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     const [snippetControllers, setSnippetControllers] = useState(props.initialMPSnippetModels)
     const mpModel = useRef(props.initialMPModel)
     const [isRecording, setIsRecording] = useState(false)
+    const [isPreviewing, setIsPreviewing] = useState(true)
     const addSnippetController = (selectedFiles: string[]): void => {
         audioControllerModel.current.pauseMaster()
         const mpSnippetModels = [] as MPSnippetModel[]
         selectedFiles.forEach((file) => {
-            const mpSnippetModel = new MPSnippetModel(file)
+            const mpSnippetModel = new MPSnippetModel(file, null)
             audioControllerModel.current.addAudio(mpSnippetModel.audioLocalUUID, file)
             mpSnippetModels.push(mpSnippetModel)
         })
@@ -94,8 +97,19 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
         setSnippetControllers(snippetControllers.filter((sc) => sc.audioLocalUUID !== id))
     }
 
-    const onSubmit = (): void => {
-        void PostMP(audioControllerModel.current.getAllUrl(), snippetControllers, mpModel.current)
+    const onSubmit = async (): Promise<void> => {
+        setIsRecording(true)
+        let masterRenderedFile: Blob | null = null
+        await AudioControllerModelHelper.getInstance().startDownloadRecord(true)
+            .then((res) => {
+                masterRenderedFile = res[0].blob
+            }).finally(() => { setIsRecording(false) })
+        if (masterRenderedFile != null) {
+            await PostMP(audioControllerModel.current.getAllUrl(), snippetControllers, mpModel.current, masterRenderedFile)
+        } else {
+            console.error('master rendered file did not get created')
+            // TODO send something to user.
+        }
     }
 
     const onSnippetTitleChange = (id: number, title: string): void => {
@@ -113,23 +127,35 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     const onNeedsChange = (newNeeds: string[]): void => {
         mpModel.current.neededInstruments = newNeeds
     }
-    const downloadStems = (): void => {
+    const downloadStems = (mpSnippetModels: MPSnippetModel[], title: string): void => {
         setIsRecording(true)
-        AudioControllerModelHelper.getInstance().startRecord().finally(() => { setIsRecording(false) })
+        AudioControllerModelHelper.getInstance().startDownloadRecord(false)
+            .then((res) => {
+                createZipFromKeyedBlob(res, mpSnippetModels, title)
+            }).finally(() => { setIsRecording(false) })
+    }
+
+    const fetchMPAudio = (): void => {
+        void FetchAndConnectMPAudio(snippetControllers).then(() => { setIsPreviewing(false) })
     }
 
     return (
-        <div style={{ width: '35%' }}>
+        <div style={{ width: '35%', position: 'relative' }}>
             <MPTitle onTitleChange={onTitleChange} defaultTitle={mpModel.current.title}/>
             <MPMetaData style={{ marginLeft: '1vw', marginRight: '1vw', marginBottom: '1vh' }}
                 defaultBpm={mpModel.current.bpm} onBPMChange={onBPMChange} defaultKey={mpModel.current.key} onKeyChange={onKeyChange}
                 defaultNeeds={mpModel.current.neededInstruments} onNeedsChange={onNeedsChange}/>
-            <MPSnippetContainer onRemove={onRemove} onAdd={addSnippetController} snippetControllers={snippetControllers}
-                onSnippetTitleChange={onSnippetTitleChange}/>
+            <div style={{ position: 'relative' }}>
+                <MPSnippetContainer onRemove={onRemove} onAdd={addSnippetController} snippetControllers={snippetControllers}
+                    onSnippetTitleChange={onSnippetTitleChange} isPreview={isPreviewing}/>
+                {isPreviewing ? <Preview isPreviewing={isPreviewing}/> : null}
+            </div>
             <Box display="flex" flexDirection="row" sx={{ justifyContent: 'center' }}>
-                <Button onClick={onSubmit}> Submit Masterpiece</Button>
+                <Button onClick={() => { void onSubmit() }}> Submit Masterpiece</Button>
                 <Button color={'warning'}> Abandon </Button>
-                <Button onClick={downloadStems}> Download Stems </Button>
+                <Button onClick={() => { downloadStems(snippetControllers, mpModel.current.title) }}> Download Stems </Button>
+                {isPreviewing ? <Button onClick={fetchMPAudio}> Fetch MP Audio </Button> : null}
+
                 {isRecording
                     ? <RecordingBackdrop isRecording={isRecording}/>
                     : null}
