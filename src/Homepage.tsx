@@ -35,6 +35,13 @@ export default function Homepage (): ReactJSXElement {
                         To developmental sandbox :O
                     </Typography>
                 </Link>
+
+                <Link to='/privacyPolicy' >
+                    <Typography variant='h6'>
+                        Privacy Policy
+                    </Typography>
+                </Link>
+
             </Box>
         </Box>
     )

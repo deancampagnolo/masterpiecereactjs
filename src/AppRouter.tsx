@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 import Explore from './Explore/Explore'
 import Sandbox from './Explore/Sandbox'
 import Homepage from './Homepage'
+import PrivacyPolicy from './PrivacyPolicy'
 
 export default function AppRouter (): ReactJSXElement {
     return (
@@ -17,6 +18,9 @@ export default function AppRouter (): ReactJSXElement {
             <Route path="/" element={
                 <Homepage/>
             } />
+            <Route path="/privacypolicy" element={
+                <PrivacyPolicy/>
+            }/>
         </Routes>
 
     )
