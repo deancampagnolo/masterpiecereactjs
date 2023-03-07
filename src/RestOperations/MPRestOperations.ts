@@ -1,6 +1,6 @@
 import MPWorkspaceContainerModel from '../Explore/Snippet/MPWorkspaceContainerModel'
 import MPSnippetModel from '../Explore/Snippet/MPSnippetModel'
-import { GetMasterpieceData, PostMPContribution } from './ServerRestOperations'
+import { GetMasterpieceData, GetServerRandomMP, PostMPContribution } from './ServerRestOperations'
 import { GetS3FileBlobURLs, PostS3Files, PostS3MasterPreview } from './S3RestOperations'
 import MasterpieceBackendContribution from './MasterpieceBackendContribution'
 import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
@@ -8,6 +8,10 @@ import MasterpieceSnippetContribution from './MasterpieceSnippetContribution'
 import MPModel from '../Explore/Snippet/MPModel'
 import MasterpieceDataContribution from './MasterpieceDataContribution'
 import { TimeObject } from 'tone/build/esm/core/type/Units'
+
+export const GetRandomMP = async (): Promise<number | null> => {
+    return await GetServerRandomMP()
+}
 
 export const PostMP = async (localUrls: string[], snippetControllers: MPSnippetModel[], mpModel: MPModel, masterRecordingBlob: Blob): Promise<void> => {
     const convertLocalUrlsToBlob = async (urls: string[]): Promise<Blob[]> => {

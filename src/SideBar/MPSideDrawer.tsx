@@ -1,11 +1,12 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { Box, Drawer, IconButton, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material'
 import React from 'react'
-import { Casino, ChevronLeft, Create, Portrait, Settings } from '@mui/icons-material'
-import { sideDrawerTheme } from './Theme/Theme'
+import { ChevronLeft, Create, Portrait, Settings } from '@mui/icons-material'
+import { sideDrawerTheme } from '../Theme/Theme'
 import { Link } from 'react-router-dom'
+import { drawerWidth, sideDrawerZIndex } from '../Theme/Styles'
 import SideBarSearchButton from './SideBarSearchButton'
-import { drawerWidth, sideDrawerZIndex } from './Theme/Styles'
+import SideBarRandomButton from './SideBarRandomButton'
 
 interface MPSideDrawerProps {
     isOpen: boolean
@@ -37,10 +38,7 @@ export default function MPSideDrawer (props: MPSideDrawerProps): ReactJSXElement
 
                             <SideBarSearchButton/>
 
-                            <ListItemButton>
-                                <ListItemIcon ><Casino /></ListItemIcon>
-                                <ListItemText primary='Random' />
-                            </ListItemButton>
+                            <SideBarRandomButton/>
 
                             <ListItemButton>
                                 <ListItemIcon ><Portrait /></ListItemIcon>

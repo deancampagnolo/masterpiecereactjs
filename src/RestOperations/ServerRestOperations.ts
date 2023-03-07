@@ -11,12 +11,23 @@ const getMasterpieceData = '/getMasterpieceData'
 const getRandomMasterpieceData = '/getRandomMasterpieceData'
 const getUrlGet = '/urlGet'
 const getUrlPostMp3s = '/urlPostMp3s'
+const getRandom = '/getRandomMasterpieceId'
 
 export const PostMPContribution = async (mpContribution: MasterpieceBackendContribution): Promise<void> => {
     const res2 = await axios.post(masterpieceApiURL + postMasterpiece, mpContribution)
     console.log(res2.status)
     alert('This song\'s id is: ' + String(res2.data)) // TODO: Move to a different spot, this isn't a good place for this
     // console.log('status: ' + res2.status.toString())
+}
+
+export const GetServerRandomMP = async (): Promise<number | null> => {
+    const res = await axios.get(masterpieceApiURL + getRandom)
+    console.log(res.status)
+    if (typeof (res.data) === 'number') {
+        return res.data
+    } else {
+        return null
+    }
 }
 
 export const GetS3FilesURLGet = async (filenames: string[]): Promise<string[] | null> => {
