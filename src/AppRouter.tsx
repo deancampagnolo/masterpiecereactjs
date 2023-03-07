@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 import Explore from './Explore/Explore'
 import Sandbox from './Explore/Sandbox'
 import Homepage from './Homepage'
+import Login from './Login'
 import PrivacyPolicy from './PrivacyPolicy'
 
 export default function AppRouter (): ReactJSXElement {
@@ -14,6 +15,9 @@ export default function AppRouter (): ReactJSXElement {
             } />
             <Route path="/sandbox" element={
                 <Sandbox/>
+            } />
+            <Route path="/login" element={
+                <Login/>
             } />
             <Route path="/" element={
                 <Homepage/>
