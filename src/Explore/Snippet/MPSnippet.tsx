@@ -10,9 +10,9 @@ import {
 } from '@mui/icons-material'
 import { Box, Divider, IconButton, Input } from '@mui/material'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import VolumeSlider from '../../VolumeSlider'
+import VolumeSlider from '../../SharedComponenets/VolumeSlider'
 import { NudgeType } from '../../Utils/AudioControllerModel'
-import NudgeBox from '../../NudgeBox'
+import NudgeBox from '../../SharedComponenets/NudgeBox'
 
 interface MPSnippetProps {
     title: string

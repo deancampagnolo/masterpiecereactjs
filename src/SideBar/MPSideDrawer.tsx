@@ -40,10 +40,12 @@ export default function MPSideDrawer (props: MPSideDrawerProps): ReactJSXElement
 
                             <SideBarRandomButton/>
 
-                            <ListItemButton>
-                                <ListItemIcon ><Portrait /></ListItemIcon>
-                                <ListItemText primary='Profile' />
-                            </ListItemButton>
+                            <Link to='/profile'>
+                                <ListItemButton>
+                                    <ListItemIcon ><Portrait /></ListItemIcon>
+                                    <ListItemText primary='Profile' />
+                                </ListItemButton>
+                            </Link>
 
                             <ListItemButton>
                                 <ListItemIcon ><Settings /></ListItemIcon>

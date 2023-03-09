@@ -1,6 +1,6 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { Box, IconButton } from '@mui/material'
-import { NudgeType } from './Utils/AudioControllerModel'
+import { NudgeType } from '../Utils/AudioControllerModel'
 import {
     KeyboardArrowLeft,
     KeyboardArrowRight,

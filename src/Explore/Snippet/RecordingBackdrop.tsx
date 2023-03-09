@@ -1,5 +1,5 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import { backdropZIndex } from './Theme/Styles'
+import { backdropZIndex } from '../../Theme/Styles'
 import Typography from '@mui/material/Typography'
 import { Backdrop, CircularProgress } from '@mui/material'
 import * as React from 'react'

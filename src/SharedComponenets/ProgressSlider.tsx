@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { Slider } from '@mui/material'
-import { AudioControllerModelHelper } from './Utils/AudioControllerModel'
+import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
 
 interface ProgressSliderProps {
     style?: React.CSSProperties | undefined

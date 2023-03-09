@@ -11,8 +11,8 @@ import MPTitle from './MPTitle'
 import MPModel from './MPModel'
 import MPMetaData from './MPMetaData'
 import Typography from '@mui/material/Typography'
-import RecordingBackdrop from '../../RecordingBackdrop'
-import Preview from '../../Preview'
+import RecordingBackdrop from './RecordingBackdrop'
+import Preview from './Preview'
 import { createZipFromKeyedBlob } from '../../Utils/ZipHelper'
 
 interface MPWorkspaceContainerProps {

@@ -25,12 +25,6 @@ export default function Homepage (): ReactJSXElement {
                     </Typography>
                 </Box>
 
-                <Link to='/login' >
-                    <Typography variant='h5'>
-                        Login!
-                    </Typography>
-                </Link>
-
                 <Link to='/explore/1' >
                     <Typography variant='h5'>
                         Try it out :)

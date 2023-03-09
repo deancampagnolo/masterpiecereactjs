@@ -2,7 +2,7 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import Typography from '@mui/material/Typography'
 import * as React from 'react'
 import { Backdrop } from '@mui/material'
-import { backdropZIndex } from './Theme/Styles'
+import { backdropZIndex } from '../../Theme/Styles'
 
 interface PreviewProps {
     isPreviewing: boolean

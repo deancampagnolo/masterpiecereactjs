@@ -4,8 +4,8 @@ import React, { useEffect, useState } from 'react'
 import { Pause, PlayArrow } from '@mui/icons-material'
 import { bottomBarTheme } from '../Theme/Theme'
 import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
-import VolumeSlider from '../VolumeSlider'
-import ProgressSlider from '../ProgressSlider'
+import VolumeSlider from '../SharedComponenets/VolumeSlider'
+import ProgressSlider from '../SharedComponenets/ProgressSlider'
 import { bottomBarZIndex } from '../Theme/Styles'
 
 const playPauseIconStyle = {

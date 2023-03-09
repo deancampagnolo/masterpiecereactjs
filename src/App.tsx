@@ -1,17 +1,23 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.css'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { Box, CssBaseline, ThemeProvider } from '@mui/material'
 import { appTheme } from './Theme/Theme'
-import WebsiteHeader from './WebsiteHeader'
+import WebsiteHeader from './WebsiteHeader/WebsiteHeader'
 import MPSideDrawer from './SideBar/MPSideDrawer'
 import MPBottomBar from './BottomBar/MPBottomBar'
 import AppRouter from './AppRouter'
 import { BrowserRouter } from 'react-router-dom'
 import { MPMain } from './MPMain'
+import GoogleOAuthHelper from './LoginUtils/GoogleUtils'
 
 function App (): ReactJSXElement {
     const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(true)
+
+    useEffect(() => {
+        GoogleOAuthHelper.getInstance() // init
+    }, [])
+
     return (
         <BrowserRouter>
             <ThemeProvider theme={appTheme}>
