@@ -13,7 +13,7 @@ export const GetRandomMP = async (): Promise<number | null> => {
     return await GetServerRandomMP()
 }
 
-export const PostMP = async (localUrls: string[], snippetControllers: MPSnippetModel[], mpModel: MPModel, masterRecordingBlob: Blob): Promise<void> => {
+export const PostMP = async (localUrls: string[], snippetControllers: MPSnippetModel[], mpModel: MPModel, masterRecordingBlob: Blob, userId?: string): Promise<void> => {
     const convertLocalUrlsToBlob = async (urls: string[]): Promise<Blob[]> => {
         const files = [] as Blob[]
         for (const url of urls) {
@@ -28,7 +28,7 @@ export const PostMP = async (localUrls: string[], snippetControllers: MPSnippetM
             snippetContributions.push(new MasterpieceSnippetContribution(value, mpSnippetModels[index].name,
                 mpSnippetModels[index].volume, JSON.stringify(mpSnippetModels[index].nudgeAmountObject)))
         })
-        const dataContribution = new MasterpieceDataContribution(99, mpModel.title, mpModel.neededInstruments, mpModel.bpm, mpModel.key, s3MasterPreviewUrl)
+        const dataContribution = new MasterpieceDataContribution((userId != null) ? userId : '-1', mpModel.title, mpModel.neededInstruments, mpModel.bpm, mpModel.key, s3MasterPreviewUrl)
         return new MasterpieceBackendContribution(dataContribution, snippetContributions)
     }
 

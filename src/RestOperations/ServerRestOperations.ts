@@ -16,7 +16,7 @@ const getRandom = '/getRandomMasterpieceId'
 export const PostMPContribution = async (mpContribution: MasterpieceBackendContribution): Promise<void> => {
     const res2 = await axios.post(masterpieceApiURL + postMasterpiece, mpContribution)
     console.log(res2.status)
-    alert('This song\'s id is: ' + String(res2.data)) // TODO: Move to a different spot, this isn't a good place for this
+    alert('This song\'s id is: ' + String(res2.data) + '\n Data may be destroyed after a month of creation') // TODO: Move to a different spot, this isn't a good place for this
     // console.log('status: ' + res2.status.toString())
 }
 

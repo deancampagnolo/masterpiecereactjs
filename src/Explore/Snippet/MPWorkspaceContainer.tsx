@@ -14,6 +14,7 @@ import Typography from '@mui/material/Typography'
 import RecordingBackdrop from './RecordingBackdrop'
 import Preview from './Preview'
 import { createZipFromKeyedBlob } from '../../Utils/ZipHelper'
+import { UserProfileData } from '../../LoginUtils/UserProfileData'
 
 interface MPWorkspaceContainerProps {
     id: number
@@ -98,6 +99,10 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     }
 
     const onSubmit = async (): Promise<void> => {
+        if (UserProfileData.getInstance() == null) {
+            alert('Must sign in to google before submitting')
+            return
+        }
         setIsRecording(true)
         let masterRenderedFile: Blob | null = null
         await AudioControllerModelHelper.getInstance().startDownloadRecord(true)
@@ -105,7 +110,7 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
                 masterRenderedFile = res[0].blob
             }).finally(() => { setIsRecording(false) })
         if (masterRenderedFile != null) {
-            await PostMP(audioControllerModel.current.getAllUrl(), snippetControllers, mpModel.current, masterRenderedFile)
+            await PostMP(audioControllerModel.current.getAllUrl(), snippetControllers, mpModel.current, masterRenderedFile, UserProfileData.getInstance()?.userId)
         } else {
             console.error('master rendered file did not get created')
             // TODO send something to user.

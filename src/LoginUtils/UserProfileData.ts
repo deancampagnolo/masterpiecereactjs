@@ -12,5 +12,5 @@ export class UserProfileData {
         this._instance = new UserProfileData(googleUserObject.sub, googleUserObject.name, googleUserObject.picture)
     }
 
-    private constructor (public userId: number, public name: string, public imageSrc: string) {}
+    private constructor (public userId: string, public name: string, public imageSrc: string) {}
 }
