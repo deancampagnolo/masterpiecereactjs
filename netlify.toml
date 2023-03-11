@@ -1,7 +1,6 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    Access-Control-Allow-Origin = "*" # FIXME this will have to be changed later
 #    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
 #    Cross-Origin-Embedder-Policy = "require-corp"
 # no use in this unless using ffmpeg
