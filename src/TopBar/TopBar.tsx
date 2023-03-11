@@ -9,11 +9,11 @@ import { websiteHeaderZIndex } from '../Theme/Styles'
 import GoogleOAuthHelper from '../LoginUtils/GoogleUtils'
 import { UserProfileData } from '../LoginUtils/UserProfileData'
 
-interface WebsiteHeaderProps {
+interface TopBarProps {
     onButtonClicked: () => void
 }
 
-export default function WebsiteHeader (props: WebsiteHeaderProps): ReactJSXElement {
+export default function TopBar (props: TopBarProps): ReactJSXElement {
     const [profileSrc, setProfileSrc] = useState<string | null>(null)
 
     const successfulAuthCallback = (): void => {

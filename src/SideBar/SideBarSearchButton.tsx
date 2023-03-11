@@ -50,7 +50,7 @@ export default function SideBarSearchButton (): ReactJSXElement {
                     <Button onClick={handleClose}>Cancel</Button>
                     {(isNaN(id)) // TODO should be restricting numbers rather than hiding submit button
                         ? null
-                        : <Link to={'/explore/' + id.toString()}>
+                        : <Link to={'/explore/' + id.toString()} style={{ textDecoration: 'none' }}>
                             <Button onClick={handleClose}>Submit</Button>
                         </Link>}
                 </DialogActions>

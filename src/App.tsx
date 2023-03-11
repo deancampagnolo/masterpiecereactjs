@@ -3,7 +3,7 @@ import './App.css'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { Box, CssBaseline, ThemeProvider } from '@mui/material'
 import { appTheme } from './Theme/Theme'
-import WebsiteHeader from './WebsiteHeader/WebsiteHeader'
+import TopBar from './TopBar/TopBar'
 import MPSideDrawer from './SideBar/MPSideDrawer'
 import MPBottomBar from './BottomBar/MPBottomBar'
 import AppRouter from './AppRouter'
@@ -23,7 +23,7 @@ function App (): ReactJSXElement {
             <ThemeProvider theme={appTheme}>
                 <CssBaseline/>
                 <div className="App">
-                    <WebsiteHeader onButtonClicked={() => { setIsSideDrawerOpen(!isSideDrawerOpen) }}/>
+                    <TopBar onButtonClicked={() => { setIsSideDrawerOpen(!isSideDrawerOpen) }}/>
                     <MPSideDrawer isOpen={isSideDrawerOpen} setIsOpen={setIsSideDrawerOpen}/>
                     <MPMain open={isSideDrawerOpen}>
                         <Box display="flex">

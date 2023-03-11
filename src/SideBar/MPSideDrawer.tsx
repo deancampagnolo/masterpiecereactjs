@@ -29,7 +29,7 @@ export default function MPSideDrawer (props: MPSideDrawerProps): ReactJSXElement
                             <ChevronLeft/>
                         </IconButton>
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <Link to='/explore/-1' >
+                            <Link to='/explore/-1' style={{ textDecoration: 'none' }}>
                                 <ListItemButton>
                                     <ListItemIcon ><Create /></ListItemIcon>
                                     <ListItemText primary='Create New' />
@@ -40,7 +40,7 @@ export default function MPSideDrawer (props: MPSideDrawerProps): ReactJSXElement
 
                             <SideBarRandomButton/>
 
-                            <Link to='/profile'>
+                            <Link to='/profile' style={{ textDecoration: 'none' }}>
                                 <ListItemButton>
                                     <ListItemIcon ><Portrait /></ListItemIcon>
                                     <ListItemText primary='Profile' />
