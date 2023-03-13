@@ -15,6 +15,7 @@ import RecordingBackdrop from './RecordingBackdrop'
 import Preview from './Preview'
 import { createZipFromKeyedBlob } from '../../Utils/ZipHelper'
 import { UserProfileData } from '../../LoginUtils/UserProfileData'
+import { PreventUserLeaving } from '../../Utils/WindowEventListenerUtils'
 
 interface MPWorkspaceContainerProps {
     id: number
@@ -94,6 +95,15 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
         setSnippetControllers([...snippetControllers, ...mpSnippetModels])
     }
 
+    useEffect(() => {
+        if (!isPreviewing) {
+            window.addEventListener('beforeunload', PreventUserLeaving)
+        }
+        return () => {
+            window.removeEventListener('beforeunload', PreventUserLeaving)
+        }
+    }, [isPreviewing])
+
     const onRemove = (id: number): void => {
         audioControllerModel.current.removeAudio(id)
         setSnippetControllers(snippetControllers.filter((sc) => sc.audioLocalUUID !== id))
@@ -162,8 +172,7 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
                 {!isPreviewing && <Button onClick={() => { void onSubmit() }}> Submit Masterpiece</Button>}
                 {!isPreviewing && <Button onClick={() => { downloadStems(snippetControllers, mpModel.current.title) }}> Download Stems </Button>}
                 {isPreviewing && <Button onClick={fetchMPAudio}> Fetch MP Audio </Button>}
-                {isRecording && <RecordingBackdrop isRecording={isRecording}/>}
-            </Box>
+                {isRecording && <RecordingBackdrop isRecording={isRecording}/>}</Box>
         </div>
     )
 }
