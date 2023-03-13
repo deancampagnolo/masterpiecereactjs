@@ -40,6 +40,7 @@ export default function ProgressSlider (props: ProgressSliderProps): ReactJSXEle
         })
     }
     return (
+        // I think I can ignore the error
         <Slider sx={props.style} value={isUserControlledSlider ? userControlledTime : percentTime} onChange={OnSliderChange} onChangeCommitted={OnChangeCommitted}/>
     )
 }

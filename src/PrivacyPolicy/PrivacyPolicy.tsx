@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography'
 
 export default function PrivacyPolicy (): ReactJSXElement {
     return (
-        <div style={{ width: '100%', justifyContent: 'center', display: 'flex' }}>
+        <div style={{ width: '100%', justifyContent: 'center', display: 'flex', overflow: 'auto' }}>
             <div style={{ width: '80%' }}>
                 <Typography variant="h3">
                 Privacy Policy

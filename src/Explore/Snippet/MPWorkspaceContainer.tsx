@@ -46,6 +46,7 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
         // CreateBlankMasterpiece()
         // setIsLoaded(true)
         console.log('Loading Next Masterpiece')
+        AudioControllerModelHelper.getInstance().pauseMaster()
         if (props.id === -1) {
             CreateBlankMasterpiece()
         } else {
@@ -141,11 +142,12 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     }
 
     const fetchMPAudio = (): void => {
+        AudioControllerModelHelper.getInstance().pauseMaster()
         void FetchAndConnectMPAudio(snippetControllers).then(() => { setIsPreviewing(false) })
     }
 
     return (
-        <div style={{ width: '35%', position: 'relative' }}>
+        <div style={{ width: '40%', position: 'relative' }}>
             <MPTitle onTitleChange={onTitleChange} defaultTitle={mpModel.current.title}/>
             <MPMetaData style={{ marginLeft: '1vw', marginRight: '1vw', marginBottom: '1vh' }}
                 defaultBpm={mpModel.current.bpm} onBPMChange={onBPMChange} defaultKey={mpModel.current.key} onKeyChange={onKeyChange}
@@ -156,14 +158,11 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
                 {isPreviewing ? <Preview isPreviewing={isPreviewing}/> : null}
             </div>
             <Box display="flex" flexDirection="row" sx={{ justifyContent: 'center' }}>
-                <Button onClick={() => { void onSubmit() }}> Submit Masterpiece</Button>
                 <Button color={'warning'}> Abandon </Button>
-                <Button onClick={() => { downloadStems(snippetControllers, mpModel.current.title) }}> Download Stems </Button>
-                {isPreviewing ? <Button onClick={fetchMPAudio}> Fetch MP Audio </Button> : null}
-
-                {isRecording
-                    ? <RecordingBackdrop isRecording={isRecording}/>
-                    : null}
+                {!isPreviewing && <Button onClick={() => { void onSubmit() }}> Submit Masterpiece</Button>}
+                {!isPreviewing && <Button onClick={() => { downloadStems(snippetControllers, mpModel.current.title) }}> Download Stems </Button>}
+                {isPreviewing && <Button onClick={fetchMPAudio}> Fetch MP Audio </Button>}
+                {isRecording && <RecordingBackdrop isRecording={isRecording}/>}
             </Box>
         </div>
     )

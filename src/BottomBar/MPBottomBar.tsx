@@ -36,7 +36,7 @@ export default function MPBottomBar (): ReactJSXElement {
 
     return (
         <ThemeProvider theme={bottomBarTheme}>
-            <AppBar position="fixed" sx={{ top: 'auto', bottom: 0, zIndex: bottomBarZIndex, paddingTop: 2, paddingBottom: 2 }}>
+            <AppBar position="static" sx={{ bottom: 0, zIndex: bottomBarZIndex, paddingTop: 2, paddingBottom: 2 }}>
                 <Box flexDirection="column" bgcolor="primary.main">
                     <Box display="flex" flexDirection="row" justifyContent="center" alignItems="center">
                         <div>
