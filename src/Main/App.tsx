@@ -10,7 +10,6 @@ import AppRouter from './AppRouter'
 import { BrowserRouter } from 'react-router-dom'
 import { MPMain } from './MPMain'
 import GoogleOAuthHelper from '../LoginUtils/GoogleUtils'
-import Typography from '@mui/material/Typography'
 
 function App (): ReactJSXElement {
     const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(true)
