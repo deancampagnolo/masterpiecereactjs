@@ -21,7 +21,7 @@ export default function MPSideDrawer (props: MPSideDrawerProps): ReactJSXElement
                     variant="persistent"
                     open={props.isOpen}
                     anchor={'left'}
-                    PaperProps={{ sx: { backgroundColor: 'primary.main', borderWidth: 0, width: drawerWidth } }}
+                    PaperProps={{ sx: { backgroundColor: 'primary.main', borderColor: 'secondary.main', borderWidth: 1, width: drawerWidth } }}
                     style={{ zIndex: sideDrawerZIndex, width: drawerWidth }}
                 >
                     <div style={{ marginTop: '5vh', marginLeft: 20, marginRight: 20, backgroundColor: 'transparent', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>

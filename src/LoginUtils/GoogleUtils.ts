@@ -24,7 +24,9 @@ export default class GoogleOAuthHelper {
                 const userObject = jwtDecode(response.credential)
                 UserProfileData.setInstance(userObject)
                 this.emit()
-            }
+            },
+            auto_select: true
+
         })
     }
 

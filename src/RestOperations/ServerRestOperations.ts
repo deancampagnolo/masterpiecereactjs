@@ -2,6 +2,7 @@ import axios from 'axios'
 import { GetDomainName } from './RestOperationsUtil'
 import { plainToInstance } from 'class-transformer'
 import MasterpieceBackendContribution from './MasterpieceBackendContribution'
+import { UserProfileData } from '../LoginUtils/UserProfileData'
 
 const masterpieceApiURL = GetDomainName() + '/api/v1/masterpiece'
 const s3FilesApiURL = GetDomainName() + '/api/v1/s3Files'
@@ -21,7 +22,8 @@ export const PostMPContribution = async (mpContribution: MasterpieceBackendContr
 }
 
 export const GetServerRandomMP = async (): Promise<number | null> => {
-    const res = await axios.get(masterpieceApiURL + getRandom)
+    const ext = UserProfileData.getInstance()?.userId ?? ''
+    const res = await axios.get(masterpieceApiURL + getRandom + '/' + ext)
     console.log(res.status)
     if (typeof (res.data) === 'number') {
         return res.data

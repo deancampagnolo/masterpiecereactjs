@@ -62,7 +62,8 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
                     key={workspaceKey}
                     initialAudioControllerModel={mpWorkspaceContainerModel.audioControllerModel}
                     initialMPSnippetModels={mpWorkspaceContainerModel.mpSnippetModels}
-                    initialMPModel={mpWorkspaceContainerModel.mpModel}/>
+                    initialMPModel={mpWorkspaceContainerModel.mpModel}
+                    initialPreviewingValue={props.id !== -1}/>
                 : <Typography variant='h6'>
                     loading...
                 </Typography>
@@ -75,6 +76,7 @@ interface MPWorkspaceProps {
     initialAudioControllerModel: AudioControllerModel
     initialMPSnippetModels: MPSnippetModel[]
     initialMPModel: MPModel
+    initialPreviewingValue: boolean
 }
 
 function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
@@ -82,7 +84,7 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     const [snippetControllers, setSnippetControllers] = useState(props.initialMPSnippetModels)
     const mpModel = useRef(props.initialMPModel)
     const [isRecording, setIsRecording] = useState(false)
-    const [isPreviewing, setIsPreviewing] = useState(true)
+    const [isPreviewing, setIsPreviewing] = useState(props.initialPreviewingValue)
     const addSnippetController = (selectedFiles: string[]): void => {
         audioControllerModel.current.pauseMaster()
         const mpSnippetModels = [] as MPSnippetModel[]
@@ -157,7 +159,7 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     }
 
     return (
-        <div style={{ width: '40%', position: 'relative' }}>
+        <div style={{ width: '55%', position: 'relative' }}>
             <MPTitle onTitleChange={onTitleChange} defaultTitle={mpModel.current.title}/>
             <MPMetaData style={{ marginLeft: '1vw', marginRight: '1vw', marginBottom: '1vh' }}
                 defaultBpm={mpModel.current.bpm} onBPMChange={onBPMChange} defaultKey={mpModel.current.key} onKeyChange={onKeyChange}
