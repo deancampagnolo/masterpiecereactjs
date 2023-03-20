@@ -2,7 +2,7 @@ import * as React from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import MPSnippetContainer from './MPSnippetContainer'
 import { useEffect, useRef, useState } from 'react'
-import { Box, Button } from '@mui/material'
+import { Box, Button, useTheme } from '@mui/material'
 import MPSnippetModel from './MPSnippetModel'
 import MPWorkspaceContainerModel from './MPWorkspaceContainerModel'
 import { FetchAndConnectMPAudio, FetchPreviewMP, PostMP } from '../../RestOperations/MPRestOperations'
@@ -16,6 +16,8 @@ import Preview from './Preview'
 import { createZipFromKeyedBlob } from '../../Utils/ZipHelper'
 import { UserProfileData } from '../../LoginUtils/UserProfileData'
 import { PreventUserLeaving } from '../../Utils/WindowEventListenerUtils'
+import { getMpWorkspaceWidth } from '../../Utils/ThemeBreakpointsUtil'
+import { useWindowBreakpointSize } from '../../Utils/WindowSizeUtil'
 
 interface MPWorkspaceContainerProps {
     id: number
@@ -97,6 +99,8 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
         setSnippetControllers([...snippetControllers, ...mpSnippetModels])
     }
 
+    useWindowBreakpointSize(useTheme())
+
     useEffect(() => {
         if (!isPreviewing) {
             window.addEventListener('beforeunload', PreventUserLeaving)
@@ -159,7 +163,7 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     }
 
     return (
-        <div style={{ width: '55%', position: 'relative' }}>
+        <div style={{ width: getMpWorkspaceWidth(useTheme()), position: 'relative' }}>
             <MPTitle onTitleChange={onTitleChange} defaultTitle={mpModel.current.title}/>
             <MPMetaData style={{ marginLeft: '1vw', marginRight: '1vw', marginBottom: '1vh' }}
                 defaultBpm={mpModel.current.bpm} onBPMChange={onBPMChange} defaultKey={mpModel.current.key} onKeyChange={onKeyChange}

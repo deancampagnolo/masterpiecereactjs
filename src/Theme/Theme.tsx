@@ -1,6 +1,40 @@
 import { teal } from '@mui/material/colors'
 import { createTheme, responsiveFontSizes } from '@mui/material'
 
+declare module '@mui/material/styles' {
+    interface Theme {
+        drawerWidth: {
+            sm: number
+            md: number
+            lg: number
+            xl: number
+        }
+        mpWorkspaceWidth: {
+            xs: string
+            sm: string
+            md: string
+            lg: string
+            xl: string
+        }
+    }
+    interface ThemeOptions {
+        drawerWidth?: {
+            xs?: number
+            sm?: number
+            md?: number
+            lg?: number
+            xl?: number
+        }
+        mpWorkspaceWidth?: {
+            xs?: string
+            sm?: string
+            md?: string
+            lg?: string
+            xl?: string
+        }
+    }
+}
+
 export const appTheme = responsiveFontSizes(createTheme({
     typography: {
         fontFamily: [
@@ -60,6 +94,28 @@ export const appTheme = responsiveFontSizes(createTheme({
         background: {
             default: '#191919'
         }
+    },
+    breakpoints: {
+        values: {
+            xs: 0,
+            sm: 600,
+            md: 960,
+            lg: 1280,
+            xl: 1921
+        }
+    },
+    drawerWidth: {
+        sm: 200,
+        md: 250,
+        lg: 250,
+        xl: 300
+    },
+    mpWorkspaceWidth: {
+        xs: '90%',
+        sm: '90%',
+        md: '80%',
+        lg: '50%',
+        xl: '40%'
     }
 }))
 

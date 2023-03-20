@@ -4,9 +4,11 @@ import React from 'react'
 import { ChevronLeft, Create, Portrait, Settings } from '@mui/icons-material'
 import { sideDrawerTheme } from '../Theme/Theme'
 import { Link } from 'react-router-dom'
-import { drawerWidth, sideDrawerZIndex } from '../Theme/Styles'
+import { sideDrawerZIndex } from '../Theme/Styles'
 import SideBarSearchButton from './SideBarSearchButton'
 import SideBarRandomButton from './SideBarRandomButton'
+import { getDrawerWidth } from '../Utils/ThemeBreakpointsUtil'
+import { useWindowBreakpointSize } from '../Utils/WindowSizeUtil'
 
 interface MPSideDrawerProps {
     isOpen: boolean
@@ -14,15 +16,17 @@ interface MPSideDrawerProps {
 }
 
 export default function MPSideDrawer (props: MPSideDrawerProps): ReactJSXElement {
+    const theme = sideDrawerTheme
+    useWindowBreakpointSize(theme)
     return (
-        <ThemeProvider theme={sideDrawerTheme}>
+        <ThemeProvider theme={theme}>
             <Box display="flex">
                 <Drawer
                     variant="persistent"
                     open={props.isOpen}
                     anchor={'left'}
-                    PaperProps={{ sx: { backgroundColor: 'primary.main', borderColor: 'secondary.main', borderWidth: 1, width: drawerWidth } }}
-                    style={{ zIndex: sideDrawerZIndex, width: drawerWidth }}
+                    PaperProps={{ sx: { backgroundColor: 'primary.main', borderColor: 'secondary.main', borderWidth: 1, width: getDrawerWidth(theme) } }}
+                    style={{ zIndex: sideDrawerZIndex, width: getDrawerWidth(theme) }}
                 >
                     <div style={{ marginTop: '5vh', marginLeft: 20, marginRight: 20, backgroundColor: 'transparent', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                         <IconButton onClick={() => { props.setIsOpen(false) }} style={{ marginLeft: 'auto' }}>

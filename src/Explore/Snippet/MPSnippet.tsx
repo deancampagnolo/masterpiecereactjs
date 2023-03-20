@@ -8,7 +8,7 @@ import {
     VolumeOff,
     VolumeUp
 } from '@mui/icons-material'
-import { Box, Divider, IconButton, Input } from '@mui/material'
+import { Box, Divider, IconButton, Input, Theme, useMediaQuery } from '@mui/material'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import VolumeSlider from '../../SharedComponenets/VolumeSlider'
 import { NudgeType } from '../../Utils/AudioControllerModel'
@@ -114,21 +114,33 @@ interface BottomPortionProps {
 }
 
 function BottomPortion (props: BottomPortionProps): ReactJSXElement {
+    const shouldStack = useMediaQuery((theme: Theme) => `${theme.breakpoints.down('md')} or (orientation: portrait)`)
     const onVolumeSliderChange = (e: Event, value: number | number[]): void => {
-        console.log(value)
         if (typeof (value) === 'number') {
             props.onVolumeSliderChange(value)
         }
     }
     return (
-        <Box display="flex" flexDirection="row" alignItems="center">
-            <Typography>
+        <Box display="flex" flexDirection="column" alignItems="center">
+            <Box display="flex" flexDirection="row" alignItems="center" width="100%">
+                <Typography>
                 Volume
-            </Typography>
-            <VolumeSlider onVolumeSliderChange={onVolumeSliderChange} defaultValue={props.initialVolume}
-                style={{ marginLeft: '20px', marginRight: '20px', width: '30%' }}/>
-            <Divider orientation="vertical" flexItem variant="middle" sx={{ margin: '10px' }}/>
-            <NudgeBox onNudge={props.onNudge}/>
+                </Typography>
+                <VolumeSlider onVolumeSliderChange={onVolumeSliderChange} defaultValue={props.initialVolume}
+                    style={{ marginLeft: '20px', marginRight: '20px', width: '30%' }}/>
+                {!shouldStack &&
+                <div style={{ display: 'flex', height: '100%', alignItems: 'center' }}>
+                    <Divider orientation="vertical" flexItem variant="middle" sx={{ margin: '10px' }}/>
+                    <NudgeBox onNudge={props.onNudge}/>
+                </div>
+                }
+            </Box>
+            {shouldStack &&
+                <div style={{ width: '100%' }}>
+                    <Divider flexItem variant="middle"/>
+                    <NudgeBox onNudge={props.onNudge}/>
+                </div>
+            }
         </Box>
     )
 }

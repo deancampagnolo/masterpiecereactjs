@@ -1,5 +1,5 @@
 import { styled } from '@mui/material'
-import { drawerWidth } from '../Theme/Styles'
+import { getDrawerWidth } from '../Utils/ThemeBreakpointsUtil'
 
 export const MPMain = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     open: boolean
@@ -15,6 +15,6 @@ export const MPMain = styled('main', { shouldForwardProp: (prop) => prop !== 'op
             easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen
         }),
-        marginLeft: drawerWidth
+        marginLeft: getDrawerWidth(theme)
     })
 }))

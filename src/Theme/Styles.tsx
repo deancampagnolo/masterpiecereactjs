@@ -1,6 +1,4 @@
 
-export const drawerWidth = 300
-
 export const websiteHeaderZIndex = 10
 
 export const bottomBarZIndex = 10
