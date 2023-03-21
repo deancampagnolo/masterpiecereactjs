@@ -1,5 +1,6 @@
 import jwtDecode from 'jwt-decode'
 import { UserProfileData } from './UserProfileData'
+import { Theme } from '@mui/material'
 
 export default class GoogleOAuthHelper {
     private static _instance: GoogleOAuthHelper
@@ -35,11 +36,20 @@ export default class GoogleOAuthHelper {
         google.accounts.id.prompt()
     }
 
-    public renderGoogleOAuthButton (): void {
+    public renderGoogleOAuthButton (theme?: Theme): void {
+        let size = 'large'
+        let text = 'signin_with'
+        if (theme != null) {
+            const { innerWidth } = window
+            if (innerWidth < theme.breakpoints.values.md) {
+                size = 'medium'
+                text = 'signin'
+            }
+        }
         // @ts-expect-error
         google.accounts.id.renderButton(
             document.getElementById('signInDiv'),
-            { theme: 'outline', size: 'large' }
+            { theme: 'outline', size, text }
         )
     }
 

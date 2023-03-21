@@ -25,7 +25,7 @@ export default function TopBar (props: TopBarProps): ReactJSXElement {
 
     useEffect(() => {
         GoogleOAuthHelper.getInstance()?.onAuthSuccess(successfulAuthCallback)
-        GoogleOAuthHelper.getInstance()?.renderGoogleOAuthButton()
+        GoogleOAuthHelper.getInstance()?.renderGoogleOAuthButton(websiteHeaderTheme)
         if (profileSrc == null) {
             GoogleOAuthHelper.getInstance()?.showPrompt()
         }
@@ -52,7 +52,10 @@ export default function TopBar (props: TopBarProps): ReactJSXElement {
                             </Typography>
                         </Link>
                     </Box>
-                    <Box display="flex" flexDirection="row-reverse" style={{ width: '100%' }}>
+                    {/* The paddingRight property is there because the signInDiv seems to have inherit margin/ padding
+                    I will probably have to make custom button in future. If you remove it the website will have unnecessary
+                     scrolling horizontally and vertically */}
+                    <Box display="flex" flexDirection="row-reverse" style={{ width: 'auto', flexGrow: 1, paddingRight: 10 }}>
                         {profileSrc == null
                             ? <div id="signInDiv"/>
                             : <Link to="/profile" style={{ textDecoration: 'none' }}>

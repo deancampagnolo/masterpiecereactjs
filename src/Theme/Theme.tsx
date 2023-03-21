@@ -1,5 +1,6 @@
 import { teal } from '@mui/material/colors'
 import { createTheme, responsiveFontSizes } from '@mui/material'
+import { darkIconColor, darkTextColor, iconColor, textColor, underlineColorBefore, underlineColorHover } from './Colors'
 
 declare module '@mui/material/styles' {
     interface Theme {
@@ -45,25 +46,22 @@ export const appTheme = responsiveFontSizes(createTheme({
         button: {
             textTransform: 'none'
         },
-        subtitle2: {
-            color: '#acaaaa'
-        },
-        h6: {
-            color: '#acaaaa'
+        allVariants: {
+            color: textColor
         }
     },
     components: {
         MuiInput: {
             styleOverrides: {
                 input: {
-                    color: '#acaaaa' // replace with your desired text color
+                    color: textColor // replace with your desired text color
                 },
                 underline: {
                     '&:before': {
-                        borderBottom: '2px solid #333333' // replace with your desired underline color
+                        borderBottom: '2px solid ' + underlineColorBefore // replace with your desired underline color
                     },
                     '&:hover:not(.Mui-disabled):before': {
-                        borderBottom: '2px solid #666666' // replace with your desired underline color on hover
+                        borderBottom: '2px solid ' + underlineColorHover // replace with your desired underline color on hover
                     }
                 }
             }
@@ -71,14 +69,14 @@ export const appTheme = responsiveFontSizes(createTheme({
         MuiListItemText: {
             styleOverrides: {
                 primary: {
-                    color: '#acaaaa' // replace with your desired text color
+                    color: textColor // replace with your desired text color
                 }
             }
         },
         MuiSvgIcon: {
             styleOverrides: {
                 root: {
-                    color: '#acaaaa' // replace with your desired icon color
+                    color: iconColor // replace with your desired icon color
                 }
             }
         }
@@ -149,14 +147,14 @@ export const snippetContainerTheme = createTheme(appTheme, {
         MuiInput: {
             styleOverrides: {
                 input: {
-                    color: '#292929' // replace with your desired text color
+                    color: darkTextColor
                 }
             }
         },
         MuiSvgIcon: {
             styleOverrides: {
                 root: {
-                    color: '#292929' // replace with your desired icon color
+                    color: darkIconColor
                 }
             }
         }
