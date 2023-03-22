@@ -15,11 +15,16 @@ export default function Preview (props: PreviewProps): ReactJSXElement {
             position: 'absolute',
             zIndex: backdropZIndex,
             color: '#ffffff',
-            backgroundColor: 'rgb(240,230,0,0.5)'
+            backgroundColor: 'preview.main'
         }} open={props.isPreviewing}>
-            <Typography variant='h2'>
-                    Preview!
-            </Typography>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                <Typography variant='h2'>
+                Preview!
+                </Typography>
+                <Typography variant='h6' color='preview.contrastText'>
+                Accept Project to work on it
+                </Typography>
+            </div>
         </Backdrop>
     )
 }

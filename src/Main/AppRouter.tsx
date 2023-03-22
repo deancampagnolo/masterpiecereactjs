@@ -6,6 +6,7 @@ import Sandbox from '../Explore/Sandbox'
 import Homepage from '../Homepage/Homepage'
 import PrivacyPolicy from '../PrivacyPolicy/PrivacyPolicy'
 import Profile from '../Profile/Profile'
+import HelpPage from '../HelpPage/HelpPage'
 
 export default function AppRouter (): ReactJSXElement {
     return (
@@ -24,6 +25,9 @@ export default function AppRouter (): ReactJSXElement {
             }/>
             <Route path="/profile" element={
                 <Profile/>
+            }/>
+            <Route path="/help" element={
+                <HelpPage/>
             }/>
         </Routes>
 

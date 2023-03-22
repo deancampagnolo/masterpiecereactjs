@@ -43,7 +43,7 @@ export default function MPBottomBar (props: MpBottomBarProps): ReactJSXElement {
 
     return (
         <ThemeProvider theme={bottomBarTheme}>
-            <AppBar ref={props.bottomBarAppRef} position="fixed" sx={{ top: 'auto', bottom: 0, zIndex: bottomBarZIndex, paddingTop: 2, paddingBottom: 2 }}>
+            <AppBar ref={props.bottomBarAppRef} position="fixed" sx={{ top: 'auto', bottom: 0, zIndex: bottomBarZIndex, paddingTop: 3, paddingBottom: 3 }}>
                 <Box flexDirection="column" bgcolor="primary.main">
                     <Box display="flex" flexDirection="row" justifyContent="center" alignItems="center">
                         <div>
@@ -79,7 +79,7 @@ export default function MPBottomBar (props: MpBottomBarProps): ReactJSXElement {
                         <Typography>
                             Progress
                         </Typography>
-                        <ProgressSlider style={{ color: 'warning.main', marginLeft: '20px', marginRight: '20px', width: isExtraSmall ? '70%' : '20%' }}/>
+                        <ProgressSlider style={{ color: 'warning.main', marginLeft: '20px', marginRight: '20px', width: isExtraSmall ? '70%' : '20%', paddingTop: 4 }}/>
                     </Box>
                 </Box>
             </AppBar>

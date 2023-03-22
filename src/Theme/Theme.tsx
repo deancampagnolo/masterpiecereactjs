@@ -1,5 +1,5 @@
 import { teal } from '@mui/material/colors'
-import { createTheme, responsiveFontSizes } from '@mui/material'
+import { createTheme, PaletteColor, PaletteColorOptions, responsiveFontSizes } from '@mui/material'
 import { darkIconColor, darkTextColor, iconColor, textColor, underlineColorBefore, underlineColorHover } from './Colors'
 
 declare module '@mui/material/styles' {
@@ -34,6 +34,12 @@ declare module '@mui/material/styles' {
             xl?: string
         }
     }
+    interface Palette {
+        preview: PaletteColor
+    }
+    interface PaletteOptions {
+        preview?: PaletteColorOptions
+    }
 }
 
 export const appTheme = responsiveFontSizes(createTheme({
@@ -54,14 +60,14 @@ export const appTheme = responsiveFontSizes(createTheme({
         MuiInput: {
             styleOverrides: {
                 input: {
-                    color: textColor // replace with your desired text color
+                    color: textColor
                 },
                 underline: {
                     '&:before': {
-                        borderBottom: '2px solid ' + underlineColorBefore // replace with your desired underline color
+                        borderBottom: '2px solid ' + underlineColorBefore
                     },
                     '&:hover:not(.Mui-disabled):before': {
-                        borderBottom: '2px solid ' + underlineColorHover // replace with your desired underline color on hover
+                        borderBottom: '2px solid ' + underlineColorHover
                     }
                 }
             }
@@ -69,15 +75,20 @@ export const appTheme = responsiveFontSizes(createTheme({
         MuiListItemText: {
             styleOverrides: {
                 primary: {
-                    color: textColor // replace with your desired text color
+                    color: textColor
                 }
             }
         },
         MuiSvgIcon: {
             styleOverrides: {
                 root: {
-                    color: iconColor // replace with your desired icon color
+                    color: iconColor
                 }
+            }
+        },
+        MuiButton: {
+            defaultProps: {
+                size: 'large'
             }
         }
     },
@@ -91,6 +102,10 @@ export const appTheme = responsiveFontSizes(createTheme({
         },
         background: {
             default: '#191919'
+        },
+        preview: {
+            main: 'rgb(0,0,0,0.55)',
+            contrastText: '#ffcccc'
         }
     },
     breakpoints: {
@@ -106,7 +121,7 @@ export const appTheme = responsiveFontSizes(createTheme({
         sm: 200,
         md: 250,
         lg: 250,
-        xl: 300
+        xl: 250
     },
     mpWorkspaceWidth: {
         xs: '90%',
@@ -137,7 +152,7 @@ export const sideDrawerTheme = createTheme(appTheme, {
 export const bottomBarTheme = createTheme(appTheme, {
     palette: {
         primary: {
-            main: '#292929'
+            main: '#222222'
         }
     }
 })
@@ -158,5 +173,12 @@ export const snippetContainerTheme = createTheme(appTheme, {
                 }
             }
         }
+    },
+    typography: {
+        // all variants doesn't work here for some reason
+        body1: {
+            color: darkTextColor
+        }
+
     }
 })

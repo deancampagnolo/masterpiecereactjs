@@ -120,6 +120,10 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
             alert('Must sign in to google before submitting')
             return
         }
+        if (snippetControllers.length < 1) {
+            alert('Must have at least one track')
+            return
+        }
         setIsRecording(true)
         let masterRenderedFile: Blob | null = null
         await AudioControllerModelHelper.getInstance().startDownloadRecord(true)
@@ -177,7 +181,7 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
                 <Button color={'warning'}> Abandon </Button>
                 {!isPreviewing && <Button onClick={() => { void onSubmit() }}> Submit Masterpiece</Button>}
                 {!isPreviewing && <Button onClick={() => { downloadStems(snippetControllers, mpModel.current.title) }}> Download Stems </Button>}
-                {isPreviewing && <Button onClick={fetchMPAudio}> Fetch MP Audio </Button>}
+                {isPreviewing && <Button onClick={fetchMPAudio}> Accept </Button>}
                 {isRecording && <RecordingBackdrop isRecording={isRecording}/>}</Box>
         </div>
     )

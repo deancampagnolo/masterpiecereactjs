@@ -25,14 +25,21 @@ export default function Profile (): ReactJSXElement {
             <Box display="flex" flexDirection="column" style={{ justifyContent: 'center', width: '50%' }}>
 
                 <Box marginTop={10} marginBottom={2} display="flex" flexDirection="column" style={{ alignItems: 'center' }}>
-                    <img src={user?.imageSrc}/>
-                    <Typography variant='h4' marginBottom={2}>
-                        Current User: {user?.name}
-                    </Typography>
-                    <Typography variant='h6'>
-                        User Id: {user?.userId}
-                    </Typography>
-                    <div id="signInDiv"/>
+                    {user != null &&
+                        <div>
+                            <img src={user?.imageSrc}/>
+                            <Typography variant='h4' marginBottom={2}>
+                                Current User: {user?.name}
+                            </Typography>
+                            <Typography variant='h6'>
+                                User Id: {user?.userId}
+                            </Typography>
+                        </div>
+                    }
+                    {user == null &&
+                    <Typography variant='h3'>
+                        Sign in on top right of page to view Profile
+                    </Typography>}
                 </Box>
             </Box>
         </Box>

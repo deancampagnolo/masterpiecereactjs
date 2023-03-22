@@ -1,7 +1,7 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { Box, Drawer, IconButton, ListItemButton, ListItemIcon, ListItemText, ThemeProvider } from '@mui/material'
 import React from 'react'
-import { ChevronLeft, Create, Portrait, Settings } from '@mui/icons-material'
+import { ChevronLeft, Create, Portrait, QuestionMark } from '@mui/icons-material'
 import { sideDrawerTheme } from '../Theme/Theme'
 import { Link } from 'react-router-dom'
 import { sideDrawerZIndex } from '../Theme/Styles'
@@ -51,10 +51,12 @@ export default function MPSideDrawer (props: MPSideDrawerProps): ReactJSXElement
                                 </ListItemButton>
                             </Link>
 
-                            <ListItemButton>
-                                <ListItemIcon ><Settings /></ListItemIcon>
-                                <ListItemText primary='Settings' />
-                            </ListItemButton>
+                            <Link to='/help' style={{ textDecoration: 'none' }}>
+                                <ListItemButton>
+                                    <ListItemIcon ><QuestionMark/></ListItemIcon>
+                                    <ListItemText primary='Help' />
+                                </ListItemButton>
+                            </Link>
                         </div>
                     </div>
                 </Drawer>
