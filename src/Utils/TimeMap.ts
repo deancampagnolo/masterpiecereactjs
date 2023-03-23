@@ -1,4 +1,4 @@
-import { Subdivision, TimeObject } from 'tone/build/esm/core/type/Units'
+import { Seconds, Subdivision, TimeObject } from 'tone/build/esm/core/type/Units'
 import { Time } from 'tone'
 
 export default class TimeMap {
@@ -45,7 +45,7 @@ export default class TimeMap {
         return newTimeMap
     }
 
-    toSeconds (): number {
+    toSeconds (): Seconds {
         return Time(this.getObject()).toSeconds()
     }
 

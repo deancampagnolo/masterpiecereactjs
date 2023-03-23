@@ -18,6 +18,7 @@ import { UserProfileData } from '../../LoginUtils/UserProfileData'
 import { PreventUserLeaving } from '../../Utils/WindowEventListenerUtils'
 import { getMpWorkspaceWidth } from '../../Utils/ThemeBreakpointsUtil'
 import { useWindowBreakpointSize } from '../../Utils/WindowSizeUtil'
+import RandomMPButton from '../../SideBar/RandomMPButton'
 
 interface MPWorkspaceContainerProps {
     id: number
@@ -91,8 +92,8 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
         audioControllerModel.current.pauseMaster()
         const mpSnippetModels = [] as MPSnippetModel[]
         selectedFiles.forEach((file) => {
-            const mpSnippetModel = new MPSnippetModel(file, null)
-            audioControllerModel.current.addAudio(mpSnippetModel.audioLocalUUID, file)
+            const mpSnippetModel = new MPSnippetModel('default', null)
+            void audioControllerModel.current.addAudio(mpSnippetModel.audioLocalUUID, file)
             mpSnippetModels.push(mpSnippetModel)
         })
 
@@ -163,6 +164,7 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
 
     const fetchMPAudio = (): void => {
         AudioControllerModelHelper.getInstance().pauseMaster()
+        AudioControllerModelHelper.getInstance().removeAllAudio()
         void FetchAndConnectMPAudio(snippetControllers).then(() => { setIsPreviewing(false) })
     }
 
@@ -178,7 +180,9 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
                 {isPreviewing ? <Preview isPreviewing={isPreviewing}/> : null}
             </div>
             <Box display="flex" flexDirection="row" sx={{ justifyContent: 'center' }}>
-                <Button color={'warning'}> Abandon </Button>
+                <RandomMPButton theButton={
+                    <Button color={'warning'}> Abandon </Button>
+                }/>
                 {!isPreviewing && <Button onClick={() => { void onSubmit() }}> Submit Masterpiece</Button>}
                 {!isPreviewing && <Button onClick={() => { downloadStems(snippetControllers, mpModel.current.title) }}> Download Stems </Button>}
                 {isPreviewing && <Button onClick={fetchMPAudio}> Accept </Button>}

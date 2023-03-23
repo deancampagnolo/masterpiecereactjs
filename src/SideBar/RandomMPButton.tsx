@@ -1,14 +1,16 @@
 import * as React from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { useNavigate } from 'react-router-dom'
-import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material'
-import { Casino } from '@mui/icons-material'
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { GetRandomMP } from '../RestOperations/MPRestOperations'
 
 const defaultLinkObj = { isActive: false, id: -1 }
 
-export default function SideBarRandomButton (): ReactJSXElement {
+interface RandomMPButtonProps {
+    theButton: ReactNode
+}
+
+export default function RandomMPButton (props: RandomMPButtonProps): ReactJSXElement {
     const [linkObj, setLinkObj] = useState(defaultLinkObj)
     const navigate = useNavigate()
     useEffect(() => {
@@ -28,9 +30,8 @@ export default function SideBarRandomButton (): ReactJSXElement {
     }
 
     return (
-        <ListItemButton onClick={onClick}>
-            <ListItemIcon ><Casino /></ListItemIcon>
-            <ListItemText primary='Random' />
-        </ListItemButton>
+        <div onClick={onClick}>
+            {props.theButton}
+        </div>
     )
 }

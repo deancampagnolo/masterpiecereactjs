@@ -8,6 +8,9 @@ import MasterpieceSnippetContribution from './MasterpieceSnippetContribution'
 import MPModel from '../Explore/Snippet/MPModel'
 import MasterpieceDataContribution from './MasterpieceDataContribution'
 import { TimeObject } from 'tone/build/esm/core/type/Units'
+import { Mutex } from 'async-mutex'
+
+const mutex = new Mutex()
 
 export const GetRandomMP = async (): Promise<number | null> => {
     return await GetServerRandomMP()
@@ -54,16 +57,23 @@ export const FetchAndConnectMPAudio = async (mpSnippetModels: MPSnippetModel[]):
             })
         }
     }
-    audioControllerModel.removeAllAudio()
-    if (urls != null) { // FIXME urls I dont think should ever be null, this is probably a consequence of random mp not being completed yet
-        urls.forEach((url: string, index) => {
-            const mpSnippetModel = mpSnippetModels[index]
-            // FIXME the mpSnippetModel isn't necessarily 'required' to be
-            //  at the same index as the newly generated url. Further updates must be careful of this. This behavior should be refactored
-            audioControllerModel.addAudio(mpSnippetModel.audioLocalUUID, url)
-        })
+    const release = await mutex.acquire()
+    try {
+        audioControllerModel.removeAllAudio()
+        if (urls != null) { // FIXME urls I dont think should ever be null, this is probably a consequence of random mp not being completed yet
+            for (const url of urls) {
+                const index = urls.indexOf(url)
+                const mpSnippetModel = mpSnippetModels[index]
+                // FIXME the mpSnippetModel isn't necessarily 'required' to be
+                //  at the same index as the newly generated url. Further updates must be careful of this. This behavior should be refactored
+                await audioControllerModel.addAudio(mpSnippetModel.audioLocalUUID, url, undefined)
+            }
+        }
+    } finally {
+        release()
     }
 }
+
 export const FetchPreviewMP = async (mpID: number): Promise<MPWorkspaceContainerModel> => {
     const audioControllerModel = AudioControllerModelHelper.getInstance()
     const mpSnippetModels = [] as MPSnippetModel[]
@@ -83,7 +93,6 @@ export const FetchPreviewMP = async (mpID: number): Promise<MPWorkspaceContainer
         })
     }
 
-    audioControllerModel.removeAllAudio()
     if (titles != null && volumes != null && nudges != null && pathsToAudio != null) { // FIXME urls I dont think should ever be null, this is probably a consequence of random mp not being completed yet
         titles.forEach((_, index) => {
             const timeObject: TimeObject = JSON.parse(nudges[index]) as TimeObject // FIXME I'm pretty sure this is a fairly unsafe cast
@@ -91,8 +100,15 @@ export const FetchPreviewMP = async (mpID: number): Promise<MPWorkspaceContainer
             mpSnippetModels.push(mpSnippetModel)
         })
     }
-    if (previewUrl != null) {
-        audioControllerModel.addAudio(0, previewUrl)
+
+    const release = await mutex.acquire()
+    try {
+        audioControllerModel.removeAllAudio()
+        if (previewUrl != null) {
+            await audioControllerModel.addAudio(0, previewUrl, undefined)
+        }
+    } finally {
+        release()
     }
 
     const createMPModel = (backendContribution: MasterpieceBackendContribution | null): MPModel => {

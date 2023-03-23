@@ -1,8 +1,10 @@
-import { Channel, loaded, Player, Recorder, start, Transport } from 'tone'
-import { Time as TimeUnit, TimeObject, TransportTime } from 'tone/build/esm/core/type/Units'
+import { Channel, loaded, Player, Recorder, start, ToneAudioBuffer, Transport } from 'tone'
+import { Seconds, Time as TimeUnit, TimeObject, TransportTime } from 'tone/build/esm/core/type/Units'
 import TimeMap from './TimeMap'
 import TransportStateEmitter from './TransportStateEmitter'
 import { KeyedBlob } from './KeyedBlob'
+
+const SECONDS_OFFSET: Seconds = 2
 
 class ChannelWrapper {
     constructor (
@@ -10,6 +12,7 @@ class ChannelWrapper {
         public player: Player,
         public src: string,
         public timeMap: TimeMap,
+        public duration: Seconds,
         public recorder?: Recorder) {}
 }
 
@@ -75,15 +78,46 @@ export default class AudioControllerModel {
         this.masterChannel = new MasterWrapper(new Channel().toDestination())
     }
 
-    addAudio (audioLocalUUID: number, src: string, timeMap?: TimeMap): void {
+    getHighestCurrentDuration (): Seconds {
+        return Array.from(this.audioControllerMap.values()).map((value) => value.duration)
+            .reduce((previousValue, currentValue) => Math.max(previousValue, currentValue), 0)
+    }
+
+    async getDuration (src: string): Promise<Seconds> {
+        let duration: Seconds = 0
+
+        let buffer: ToneAudioBuffer | undefined
+        await new Promise((resolve, reject) => {
+            // eslint-disable-next-line no-new
+            buffer = new ToneAudioBuffer(src, (theBuffer) => {
+                duration = theBuffer.duration
+                resolve('got duration')
+                theBuffer.dispose()
+            }, (error: Error) => {
+                console.error(error)
+                reject(error)
+            }
+            )
+        })
+        buffer?.dispose()
+        return duration
+    }
+
+    async addAudio (audioLocalUUID: number, src: string, timeMap?: TimeMap): Promise<void> {
+        const duration = await this.getDuration(src)
+
         if (timeMap == null) {
             timeMap = new TimeMap()
         }
+        if (duration + SECONDS_OFFSET > Transport.loopEnd) {
+            Transport.loopEnd = duration + SECONDS_OFFSET
+        }
+
         const player = new Player(src).sync().start(timeMap.getObject())
         const channel = new Channel()
         player.connect(channel)
         channel.connect(this.masterChannel.channel)
-        this.audioControllerMap.set(audioLocalUUID, { channel, player, src, timeMap })
+        this.audioControllerMap.set(audioLocalUUID, { channel, player, src, timeMap, duration })
     }
 
     removeAudio (audioLocalUUID: number): boolean {
@@ -91,6 +125,9 @@ export default class AudioControllerModel {
         if (sourceWrapper != null) {
             sourceWrapper.channel.dispose() // TODO Not 100% sure if this disposes associated source (I dont think it does)
             this.audioControllerMap.delete(audioLocalUUID)
+
+            Transport.loopEnd = this.getHighestCurrentDuration() + SECONDS_OFFSET
+
             return true
         }
         console.error('Audio not correctly removed')
