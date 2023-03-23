@@ -2,7 +2,7 @@ import React from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { Box, Input, InputBaseComponentProps } from '@mui/material'
 import Typography from '@mui/material/Typography'
-import { appTheme } from '../Theme/Theme'
+import { appTheme } from '../../Theme/Theme'
 
 interface MetaDataInputProps {
     title: string

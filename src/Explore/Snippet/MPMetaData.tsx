@@ -1,5 +1,5 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import MetaDataInput from '../MetaDataInput'
+import MetaDataInput from './MetaDataInput'
 import * as React from 'react'
 import { useState } from 'react'
 
@@ -31,8 +31,10 @@ export default function MPMetaData (props: MPMetaDataProps): ReactJSXElement {
     }
 
     const onNeedsChangeEvent = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-        // TODO
-        setNeeds([...needs])
+        const newNeeds: string = e.target.value
+        const arrayOfNeeds = newNeeds.split(',')
+        setNeeds(arrayOfNeeds)
+        props.onNeedsChange(arrayOfNeeds)
     }
     return (
         <div style={props.style}>
