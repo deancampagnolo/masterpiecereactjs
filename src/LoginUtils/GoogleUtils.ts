@@ -51,6 +51,7 @@ export default class GoogleOAuthHelper {
             document.getElementById('signInDiv'),
             { theme: 'outline', size, text }
         )
+        // FIXME Header flickers when button initially rerendered
     }
 
     listeners = [] as Array<() => void>

@@ -17,7 +17,6 @@ export default function Profile (): ReactJSXElement {
 
     useEffect(() => {
         GoogleOAuthHelper.getInstance()?.onAuthSuccess(successfulAuthCallback)
-        GoogleOAuthHelper.getInstance()?.renderGoogleOAuthButton()
         if (user == null) {
             GoogleOAuthHelper.getInstance()?.showPrompt()
         }
