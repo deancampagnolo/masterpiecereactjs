@@ -13,6 +13,10 @@ const getRandomMasterpieceData = '/getRandomMasterpieceData'
 const getUrlGet = '/urlGet'
 const getUrlPostMp3s = '/urlPostMp3s'
 const getRandom = '/getRandomMasterpieceId'
+const getHistory = '/getAllMasterpieceHistory'
+const getMasterpieceTitle = '/getMasterpieceTitle'
+
+const HISTORY_AMOUNT = 200
 
 export const PostMPContribution = async (mpContribution: MasterpieceBackendContribution): Promise<void> => {
     const res2 = await axios.post(masterpieceApiURL + postMasterpiece, mpContribution)
@@ -26,6 +30,17 @@ export const GetServerRandomMP = async (): Promise<number | null> => {
     const res = await axios.get(masterpieceApiURL + getRandom + '/' + ext)
     console.log(res.status)
     if (typeof (res.data) === 'number') {
+        return res.data
+    } else {
+        return null
+    }
+}
+
+export const GetAllUserMPHistory = async (userId: string): Promise<number[] | null> => {
+    const page = 0 // TODO implement pagination
+    const res = await axios.get(masterpieceApiURL + getHistory + '/' + userId + '/' + page.toString() + '/' + HISTORY_AMOUNT.toString())
+    console.log(res.status)
+    if (typeof (res.data[0]) === 'number') {
         return res.data
     } else {
         return null
@@ -78,6 +93,15 @@ export const GetMasterpieceData = async (id: number): Promise<MasterpieceBackend
     // I'm pretty sure it is glitching because plainToInstance is an overloaded function that can also return the array version of it
     if (contribution instanceof MasterpieceBackendContribution) {
         return contribution
+    } else {
+        return null
+    }
+}
+
+export const GetMasterpieceTitle = async (id: number): Promise<string | null> => {
+    const res = await axios.get(masterpieceApiURL + getMasterpieceTitle + '/' + id.toString())
+    if (typeof (res.data) === 'string') {
+        return res.data
     } else {
         return null
     }

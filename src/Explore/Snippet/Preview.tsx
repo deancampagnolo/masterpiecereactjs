@@ -22,7 +22,10 @@ export default function Preview (props: PreviewProps): ReactJSXElement {
                 Preview!
                 </Typography>
                 <Typography variant='h6' color='preview.contrastText'>
-                Accept Project to work on it
+                    Accept Project to load and work on it
+                </Typography>
+                <Typography variant='subtitle1' color='preview.contrastText' >
+                    (You can play the project before loading it!)
                 </Typography>
             </div>
         </Backdrop>

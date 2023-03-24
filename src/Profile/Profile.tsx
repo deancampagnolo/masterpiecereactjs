@@ -4,9 +4,12 @@ import { Box } from '@mui/material'
 import Typography from '@mui/material/Typography'
 import { UserProfileData } from '../LoginUtils/UserProfileData'
 import GoogleOAuthHelper from '../LoginUtils/GoogleUtils'
+import MPLink from '../SharedComponenets/MPLink'
+import { GetAllMPHistory } from '../RestOperations/MPRestOperations'
 
 export default function Profile (): ReactJSXElement {
     const [user, setUser] = useState(UserProfileData.getInstance())
+    const [mpLinks, setMpLinks] = useState(null as number[] | null)
 
     const successfulAuthCallback = (): void => {
         setUser(UserProfileData.getInstance())
@@ -19,6 +22,18 @@ export default function Profile (): ReactJSXElement {
             GoogleOAuthHelper.getInstance()?.showPrompt()
         }
     }, [])
+
+    useEffect(() => {
+        if (user != null) {
+            GetAllMPHistory(user.userId).then(
+                newMpLinks => {
+                    if (newMpLinks != null) {
+                        setMpLinks(newMpLinks)
+                    }
+                }
+            ).catch(console.error)
+        }
+    }, [user])
 
     return (
         <Box display="flex" flexDirection="column" style={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}>
@@ -34,6 +49,18 @@ export default function Profile (): ReactJSXElement {
                             <Typography variant='h6'>
                                 User Id: {user?.userId}
                             </Typography>
+                            <Typography variant='h5'>
+                                Your Previous Projects:
+                            </Typography>
+                            { mpLinks?.map((value, index) => {
+                                return (<MPLink key={index} mpId={value}/>)
+                            })
+                            }
+                            {/* TODO implement pagination */}
+                            {/* { */}
+                            {/*     (mpLinks.length === 10) && */}
+                            {/*     <Button> Next Page </Button> */}
+                            {/* } */}
                         </div>
                     }
                     {user == null &&

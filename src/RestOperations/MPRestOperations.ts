@@ -1,6 +1,12 @@
 import MPWorkspaceContainerModel from '../Explore/Snippet/MPWorkspaceContainerModel'
 import MPSnippetModel from '../Explore/Snippet/MPSnippetModel'
-import { GetMasterpieceData, GetServerRandomMP, PostMPContribution } from './ServerRestOperations'
+import {
+    GetMasterpieceData,
+    GetServerRandomMP,
+    GetAllUserMPHistory,
+    PostMPContribution,
+    GetMasterpieceTitle
+} from './ServerRestOperations'
 import { GetS3FileBlobURLs, PostS3Files, PostS3MasterPreview } from './S3RestOperations'
 import MasterpieceBackendContribution from './MasterpieceBackendContribution'
 import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
@@ -14,6 +20,14 @@ const mutex = new Mutex()
 
 export const GetRandomMP = async (): Promise<number | null> => {
     return await GetServerRandomMP()
+}
+
+export const GetAllMPHistory = async (userId: string): Promise<number[] | null> => {
+    return await GetAllUserMPHistory(userId)
+}
+
+export const GetMPTitle = async (id: number): Promise<string | null> => {
+    return await GetMasterpieceTitle(id)
 }
 
 export const PostMP = async (localUrls: string[], snippetControllers: MPSnippetModel[], mpModel: MPModel, masterRecordingBlob: Blob, userId?: string): Promise<void> => {

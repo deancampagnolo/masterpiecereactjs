@@ -57,7 +57,7 @@ export default function MPSnippetContainer (props: MPSnippetContainerProps): Rea
     return (
         <ThemeProvider theme={snippetContainerTheme}>
             <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" style={props.style}>
-                {props.snippetControllers.map((item, index) => {
+                {props.snippetControllers.map((item) => {
                     return (
                         <MPSnippet key={item.audioLocalUUID} title={item.name}
                             onRemove={() => { props.onRemove(item.audioLocalUUID) }} onMute={() => { onMute(item.audioLocalUUID) }}

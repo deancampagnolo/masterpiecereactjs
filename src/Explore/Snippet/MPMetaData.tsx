@@ -19,19 +19,21 @@ export default function MPMetaData (props: MPMetaDataProps): ReactJSXElement {
     const [needs, setNeeds] = useState(props.defaultNeeds)
 
     const onBpmChangeEvent = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-        const newBpm = Number(e.target.value)
+        const newBpm = typeof (e.target.value.valueOf()) === 'number' ? Number(e.target.value.valueOf()) : -1
+
         setBpm(newBpm)
         props.onBPMChange(newBpm)
     }
 
     const onKeyChangeEvent = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-        const newKey = e.target.value
+        const newKey = typeof (e.target.value.valueOf()) === 'string' ? e.target.value : ''
+
         setKey(newKey)
         props.onKeyChange(newKey)
     }
 
     const onNeedsChangeEvent = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-        const newNeeds: string = e.target.value
+        const newNeeds = typeof (e.target.value.valueOf()) === 'string' ? e.target.value : ''
         const arrayOfNeeds = newNeeds.split(',')
         setNeeds(arrayOfNeeds)
         props.onNeedsChange(arrayOfNeeds)
