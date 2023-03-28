@@ -25,6 +25,51 @@ export default function Homepage (): ReactJSXElement {
                     </Typography>
                 </Box>
 
+                <Box marginTop={10} marginBottom={2}>
+                    <Typography variant='h4' marginBottom={2}>
+                        What is Masterpiece Music?
+                    </Typography>
+                    <Typography variant='h6'>
+                        Masterpiece Music is a great way to collaboratively create music, requiring you to only make the parts that you are interested in!
+                    </Typography>
+                </Box>
+
+                <Box marginTop={10} marginBottom={2}>
+                    <Typography variant='h4' marginBottom={2}>
+                        What is Masterpiece Music?
+                    </Typography>
+                    <Typography variant='h6'>
+                        Masterpiece Music is a great way to collaboratively create music, requiring you to only make the parts that you are interested in!
+                    </Typography>
+                </Box>
+
+                <Box marginTop={10} marginBottom={2}>
+                    <Typography variant='h4' marginBottom={2}>
+                        What is Masterpiece Music?
+                    </Typography>
+                    <Typography variant='h6'>
+                        Masterpiece Music is a great way to collaboratively create music, requiring you to only make the parts that you are interested in!
+                    </Typography>
+                </Box>
+
+                <Box marginTop={10} marginBottom={2}>
+                    <Typography variant='h4' marginBottom={2}>
+                        What is Masterpiece Music?
+                    </Typography>
+                    <Typography variant='h6'>
+                        Masterpiece Music is a great way to collaboratively create music, requiring you to only make the parts that you are interested in!
+                    </Typography>
+                </Box>
+
+                <Box marginTop={10} marginBottom={2}>
+                    <Typography variant='h4' marginBottom={2}>
+                        What is Masterpiece Music?
+                    </Typography>
+                    <Typography variant='h6'>
+                        Masterpiece Music is a great way to collaboratively create music, requiring you to only make the parts that you are interested in!
+                    </Typography>
+                </Box>
+
                 <Link to='/explore/1' >
                     <Typography variant='h5'>
                         Try it out :)

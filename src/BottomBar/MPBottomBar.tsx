@@ -1,6 +1,6 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { AppBar, Box, IconButton, Theme, ThemeProvider, Typography, useMediaQuery } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Pause, PlayArrow } from '@mui/icons-material'
 import { bottomBarTheme } from '../Theme/Theme'
 import { AudioControllerModelHelper } from '../Utils/AudioControllerModel'
@@ -15,11 +15,17 @@ const playPauseIconStyle = {
 }
 
 interface MpBottomBarProps {
-    bottomBarAppRef: React.MutableRefObject<HTMLDivElement | null>
+    setBottomBarHeight: (height: number) => void
 }
 
 export default function MPBottomBar (props: MpBottomBarProps): ReactJSXElement {
     const [isPlaying, setIsPlaying] = useState(false)
+
+    const measuredRef = useCallback((node: HTMLDivElement | null) => {
+        if (node !== null) {
+            props.setBottomBarHeight(node.getBoundingClientRect().height)
+        }
+    }, [])
 
     useEffect(() => {
         AudioControllerModelHelper.getInstance().clearTransportStateEmitter()
@@ -43,7 +49,7 @@ export default function MPBottomBar (props: MpBottomBarProps): ReactJSXElement {
 
     return (
         <ThemeProvider theme={bottomBarTheme}>
-            <AppBar ref={props.bottomBarAppRef} position="fixed" sx={{ top: 'auto', bottom: 0, zIndex: bottomBarZIndex, paddingTop: 3, paddingBottom: 3 }}>
+            <AppBar ref={measuredRef} position="fixed" sx={{ top: 'auto', bottom: 0, zIndex: bottomBarZIndex, paddingTop: 3, paddingBottom: 3 }}>
                 <Box flexDirection="column" bgcolor="primary.main">
                     <Box display="flex" flexDirection="row" justifyContent="center" alignItems="center">
                         <div>

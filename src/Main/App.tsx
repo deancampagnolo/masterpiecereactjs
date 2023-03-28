@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.css'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { Box, CssBaseline, Theme, useMediaQuery } from '@mui/material'
@@ -13,7 +13,7 @@ import GoogleOAuthHelper from '../LoginUtils/GoogleUtils'
 function App (): ReactJSXElement {
     const shouldHideSideDrawer = useMediaQuery((theme: Theme) => `${theme.breakpoints.down('sm')} or (orientation: portrait)`)
     const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(!shouldHideSideDrawer)
-    const bottomAppBarRef = useRef(null as HTMLDivElement | null)
+    const [bottomBarHeight, setBottomBarHeight] = useState(0)
 
     useEffect(() => {
         GoogleOAuthHelper.getInstance() // init
@@ -28,11 +28,11 @@ function App (): ReactJSXElement {
                     <MPSideDrawer isOpen={isSideDrawerOpen} setIsOpen={setIsSideDrawerOpen}/>
                     <MPMain open={isSideDrawerOpen}>
                         {/* extra pixels added to clientHeight as temporary solution for when bottom bar resizes */}
-                        <Box display="flex" marginBottom={bottomAppBarRef.current != null ? (bottomAppBarRef.current?.clientHeight + 20).toString() + 'px' : 0}>
+                        <Box display="flex" marginBottom={bottomBarHeight.toString() + 'px'}>
                             <AppRouter/>
                         </Box>
                     </MPMain>
-                    <MPBottomBar bottomBarAppRef={bottomAppBarRef}/>
+                    <MPBottomBar setBottomBarHeight={setBottomBarHeight}/>
                 </div>
             </div>
         </BrowserRouter>

@@ -10,7 +10,7 @@ import {
     useMediaQuery
 } from '@mui/material'
 import React from 'react'
-import { Casino, ChevronLeft, Create, Portrait, QuestionMark } from '@mui/icons-material'
+import { Article, Casino, ChevronLeft, Create, Portrait, QuestionMark } from '@mui/icons-material'
 import { sideDrawerTheme } from '../Theme/Theme'
 import { Link } from 'react-router-dom'
 import { sideDrawerZIndex } from '../Theme/Styles'
@@ -76,6 +76,12 @@ export default function MPSideDrawer (props: MPSideDrawerProps): ReactJSXElement
                                 <ListItemButton onClick={ autoCloseSideDrawer }>
                                     <ListItemIcon ><QuestionMark/></ListItemIcon>
                                     <ListItemText primary='Help' />
+                                </ListItemButton>
+                            </Link>
+                            <Link to='/privacyPolicy' style={{ textDecoration: 'none' }}>
+                                <ListItemButton onClick={ autoCloseSideDrawer }>
+                                    <ListItemIcon ><Article/></ListItemIcon>
+                                    <ListItemText primary='Privacy Policy' />
                                 </ListItemButton>
                             </Link>
                         </div>
