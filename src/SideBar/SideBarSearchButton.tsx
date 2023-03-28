@@ -11,7 +11,11 @@ import { Search } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 
-export default function SideBarSearchButton (): ReactJSXElement {
+interface SideBarSearchButtonProps {
+    onButtonClick: () => void
+}
+
+export default function SideBarSearchButton (props: SideBarSearchButtonProps): ReactJSXElement {
     const [open, setOpen] = React.useState(false)
     const [id, setId] = React.useState(NaN)
 
@@ -21,6 +25,7 @@ export default function SideBarSearchButton (): ReactJSXElement {
 
     const handleClose = (): void => {
         setOpen(false)
+        props.onButtonClick()
     }
 
     return (

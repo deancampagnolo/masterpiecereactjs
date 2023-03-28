@@ -1,6 +1,7 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import { Slider } from '@mui/material'
 import * as React from 'react'
+import { dbValueToSliderValue, sliderValueToDbValue } from '../Utils/VolumeUtil'
 
 interface VolumeSliderProps {
     onVolumeSliderChange: (e: Event, value: number | number[]) => void
@@ -9,7 +10,12 @@ interface VolumeSliderProps {
 }
 
 export default function VolumeSlider (props: VolumeSliderProps): ReactJSXElement {
+    const onSliderChange = (e: Event, value: number | number[]): void => {
+        const newSliderValue = value as number
+        props.onVolumeSliderChange(e, sliderValueToDbValue(newSliderValue))
+    }
+
     return (
-        <Slider onChange={props.onVolumeSliderChange} min={-60} max={0} defaultValue={props.defaultValue} sx={props.style}/>
+        <Slider onChange={onSliderChange} min={0} max={100} defaultValue={dbValueToSliderValue(props.defaultValue as number)} sx={props.style}/>
     )
 }
