@@ -63,7 +63,7 @@ export default function MPBottomBar (props: MpBottomBarProps): ReactJSXElement {
                         </div>
 
                         {!shouldStack &&
-                            <div style={{ display: 'flex', flexDirection: 'row', width: '15%', justifyContent: 'center' }}>
+                            <div style={{ display: 'flex', flexDirection: 'row', width: '15%', justifyContent: 'center', alignItems: 'center' }}>
                                 <Typography style={{ marginLeft: '10px' }}>
                                 Master Volume
                                 </Typography>

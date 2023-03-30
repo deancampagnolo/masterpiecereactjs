@@ -14,6 +14,7 @@ function App (): ReactJSXElement {
     const shouldHideSideDrawer = useMediaQuery((theme: Theme) => `${theme.breakpoints.down('sm')} or (orientation: portrait)`)
     const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(!shouldHideSideDrawer)
     const [bottomBarHeight, setBottomBarHeight] = useState(0)
+    const [topBarHeight, setTopBarHeight] = useState(0)
 
     useEffect(() => {
         GoogleOAuthHelper.getInstance() // init
@@ -24,11 +25,11 @@ function App (): ReactJSXElement {
             <div style={{ height: '100vh' }}>
                 <CssBaseline/>
                 <div className="App" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-                    <TopBar onButtonClicked={() => { setIsSideDrawerOpen(!isSideDrawerOpen) }}/>
+                    <TopBar setTopBarHeight={setTopBarHeight} onButtonClicked={() => { setIsSideDrawerOpen(!isSideDrawerOpen) }}/>
                     <MPSideDrawer isOpen={isSideDrawerOpen} setIsOpen={setIsSideDrawerOpen}/>
                     <MPMain open={isSideDrawerOpen}>
                         {/* extra pixels added to clientHeight as temporary solution for when bottom bar resizes */}
-                        <Box display="flex" marginBottom={bottomBarHeight.toString() + 'px'}>
+                        <Box display="flex" marginTop={topBarHeight.toString() + 'px'} marginBottom={bottomBarHeight.toString() + 'px'}>
                             <AppRouter/>
                         </Box>
                     </MPMain>
