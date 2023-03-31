@@ -154,6 +154,20 @@ export default class AudioControllerModel {
         this.emitTransportStateChanged(false)
     }
 
+    async pauseMasterGuaranteed (): Promise<void> {
+        await new Promise(resolve => {
+            if (Transport.state === 'started') {
+                Transport.pause()
+                setTimeout(() => {
+                    resolve('resolved after started')
+                }, 100)
+            } else {
+                resolve('resolved without started')
+            }
+            this.emitTransportStateChanged(false)
+        })
+    }
+
     startMaster (time?: TimeUnit, offset?: TransportTime, shouldHaveStartDelay?: boolean): void {
         // note: be careful start() to here and other pause/start/etc. as some events are time based off of these
         const startIt = (): void => {

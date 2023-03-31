@@ -2,7 +2,7 @@ import * as React from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import MPSnippetContainer from './MPSnippetContainer'
 import { useEffect, useRef, useState } from 'react'
-import { Box, Button, useTheme } from '@mui/material'
+import { Box, Button, Fade, useTheme } from '@mui/material'
 import MPSnippetModel from './MPSnippetModel'
 import MPWorkspaceContainerModel from './MPWorkspaceContainerModel'
 import { FetchAndConnectMPAudio, FetchPreviewMP, PostMP } from '../../RestOperations/MPRestOperations'
@@ -67,9 +67,13 @@ export default function MPWorkspaceContainer (props: MPWorkspaceContainerProps):
                     initialMPSnippetModels={mpWorkspaceContainerModel.mpSnippetModels}
                     initialMPModel={mpWorkspaceContainerModel.mpModel}
                     initialPreviewingValue={props.id !== -1}/>
-                : <Typography variant='h6'>
-                    loading...
-                </Typography>
+                : <Fade in={true} timeout={1000}>
+                    <div>
+                        <Typography variant='h6'>
+                            loading...
+                        </Typography>
+                    </div>
+                </Fade>
             }
         </div>
     )
@@ -169,24 +173,26 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     }
 
     return (
-        <div style={{ width: getMpWorkspaceWidth(useTheme()), position: 'relative' }}>
-            <MPTitle onTitleChange={onTitleChange} defaultTitle={mpModel.current.title}/>
-            <MPMetaData style={{ marginLeft: '1vw', marginRight: '1vw', marginBottom: '1vh' }}
-                defaultBpm={mpModel.current.bpm} onBPMChange={onBPMChange} defaultKey={mpModel.current.key} onKeyChange={onKeyChange}
-                defaultNeeds={mpModel.current.neededInstruments} onNeedsChange={onNeedsChange}/>
-            <div style={{ position: 'relative' }}>
-                <MPSnippetContainer onRemove={onRemove} onAdd={addSnippetController} snippetControllers={snippetControllers}
-                    onSnippetTitleChange={onSnippetTitleChange} isPreview={isPreviewing}/>
-                {isPreviewing ? <Preview isPreviewing={isPreviewing}/> : null}
+        <Fade in={true} timeout={1000} /* Fade may seem to run twice bc of React Safe Mode */>
+            <div style={{ width: getMpWorkspaceWidth(useTheme()), position: 'relative' }}>
+                <MPTitle onTitleChange={onTitleChange} defaultTitle={mpModel.current.title}/>
+                <MPMetaData style={{ marginLeft: '1vw', marginRight: '1vw', marginBottom: '1vh' }}
+                    defaultBpm={mpModel.current.bpm} onBPMChange={onBPMChange} defaultKey={mpModel.current.key} onKeyChange={onKeyChange}
+                    defaultNeeds={mpModel.current.neededInstruments} onNeedsChange={onNeedsChange}/>
+                <div style={{ position: 'relative' }}>
+                    <MPSnippetContainer onRemove={onRemove} onAdd={addSnippetController} snippetControllers={snippetControllers}
+                        onSnippetTitleChange={onSnippetTitleChange} isPreview={isPreviewing}/>
+                    {isPreviewing ? <Preview isPreviewing={isPreviewing}/> : null}
+                </div>
+                <Box display="flex" flexDirection="row" sx={{ justifyContent: 'center' }}>
+                    <RandomMPButton shouldAlert={!isPreviewing} theButton={
+                        <Button color={'warning'}> Abandon </Button>
+                    }/>
+                    {!isPreviewing && <Button onClick={() => { void onSubmit() }}> Submit Masterpiece</Button>}
+                    {!isPreviewing && <Button onClick={() => { downloadStems(snippetControllers, mpModel.current.title) }}> Download Stems </Button>}
+                    {isPreviewing && <Button onClick={fetchMPAudio}> Accept </Button>}
+                    {isRecording && <RecordingBackdrop isRecording={isRecording}/>}</Box>
             </div>
-            <Box display="flex" flexDirection="row" sx={{ justifyContent: 'center' }}>
-                <RandomMPButton theButton={
-                    <Button color={'warning'}> Abandon </Button>
-                }/>
-                {!isPreviewing && <Button onClick={() => { void onSubmit() }}> Submit Masterpiece</Button>}
-                {!isPreviewing && <Button onClick={() => { downloadStems(snippetControllers, mpModel.current.title) }}> Download Stems </Button>}
-                {isPreviewing && <Button onClick={fetchMPAudio}> Accept </Button>}
-                {isRecording && <RecordingBackdrop isRecording={isRecording}/>}</Box>
-        </div>
+        </Fade>
     )
 }

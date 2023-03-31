@@ -59,7 +59,7 @@ export default function MPSideDrawer (props: MPSideDrawerProps): ReactJSXElement
 
                             <SideBarSearchButton onButtonClick={ autoCloseSideDrawer }/>
 
-                            <RandomMPButton theButton={
+                            <RandomMPButton shouldAlert={false} theButton={
                                 <ListItemButton onClick={ autoCloseSideDrawer }>
                                     <ListItemIcon ><Casino /></ListItemIcon>
                                     <ListItemText primary='Random' />
