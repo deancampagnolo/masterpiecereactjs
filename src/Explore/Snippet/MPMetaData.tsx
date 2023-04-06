@@ -19,7 +19,8 @@ export default function MPMetaData (props: MPMetaDataProps): ReactJSXElement {
     const [needs, setNeeds] = useState(props.defaultNeeds)
 
     const onBpmChangeEvent = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-        const newBpm = typeof (e.target.value.valueOf()) === 'number' ? Number(e.target.value.valueOf()) : -1
+        const inputNumber = Number(e.target.value)
+        const newBpm = !Number.isNaN(inputNumber) ? inputNumber : -1
 
         setBpm(newBpm)
         props.onBPMChange(newBpm)

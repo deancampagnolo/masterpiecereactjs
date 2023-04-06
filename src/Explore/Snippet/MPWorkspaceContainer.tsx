@@ -121,12 +121,25 @@ function MPWorkspace (props: MPWorkspaceProps): ReactJSXElement {
     }
 
     const onSubmit = async (): Promise<void> => {
+        let totalAlertString = ''
         if (UserProfileData.getInstance() == null) {
-            alert('Must sign in to google before submitting')
-            return
+            totalAlertString += 'Must sign in to google before submitting\n'
         }
         if (snippetControllers.length < 1) {
-            alert('Must have at least one track')
+            totalAlertString += 'Must have at least one track\n'
+        }
+        if (mpModel.current.title.toLowerCase() === 'default') {
+            totalAlertString += 'Title cannot be \'default\'\n'
+        }
+        console.log(mpModel.current.bpm)
+        if (mpModel.current.bpm < 1) {
+            totalAlertString += 'Bpm cannot be less than 1\n'
+        }
+        if (mpModel.current.key.toLowerCase() === 'default') {
+            totalAlertString += 'Key cannot be default\n'
+        }
+        if (totalAlertString.length > 0) {
+            alert(totalAlertString)
             return
         }
         setIsRecording(true)
