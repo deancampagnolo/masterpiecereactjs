@@ -56,7 +56,8 @@ export default function Homepage (): ReactJSXElement {
     useWindowBreakpointSize(useTheme())
     return (
         <Box display="flex" flexDirection="column" style={{ justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-            <Box display="flex" flexDirection="column" style={{ justifyContent: 'center', width: getMpWorkspaceWidth(useTheme()) }}>
+            {/* sx padding bottom for space and  */}
+            <Box display="flex" flexDirection="column" style={{ justifyContent: 'center', width: getMpWorkspaceWidth(useTheme()) }} sx={{ paddingBottom: 5 }}>
                 <FadeInSection sx={{ marginTop: 16, marginBottom: 16 }}>
                     <Box>
                         <Typography variant='h3' marginBottom={4} >
