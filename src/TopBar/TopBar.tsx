@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography'
 import { fullSizeGoogleAuthButtonHeight, websiteHeaderZIndex } from '../Theme/Styles'
 import GoogleOAuthHelper from '../LoginUtils/GoogleUtils'
 import { UserProfileData } from '../LoginUtils/UserProfileData'
+import WebsiteNotFinishedBanner from '../WebsiteNotFinishedBanner'
 
 interface TopBarProps {
     setTopBarHeight: (height: number) => void
@@ -40,6 +41,7 @@ export default function TopBar (props: TopBarProps): ReactJSXElement {
     return (
         <ThemeProvider theme={websiteHeaderTheme}>
             <AppBar ref={measuredRef} position="fixed" elevation={0} style={{ zIndex: websiteHeaderZIndex, minHeight: fullSizeGoogleAuthButtonHeight }}>
+                <WebsiteNotFinishedBanner/>
                 <Box bgcolor="primary.main" display="flex" flexDirection="row" style={{ alignItems: 'center', height: '100%' }}>
                     <Box display="flex" flexDirection="row" alignItems="center" style={{ height: '100%' }}>
                         <IconButton
